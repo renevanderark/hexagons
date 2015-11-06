@@ -1,0 +1,26 @@
+{
+  "name": "gm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "scripts/server.js",
+    "watch": "scripts/watch.sh"
+  },
+  "devDependencies": {
+    "babel": "^5.8.29",
+    "babel-eslint": "^4.1.4",
+    "babelify": "^6.4.0",
+    "browser-sync": "^2.9.12",
+    "derequire": "^2.0.3",
+    "eslint": "^1.8.0",
+    "eslint-plugin-react": "^3.7.1",
+    "react": "^0.13.3",
+    "watchify": "^3.6.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.debounce": "^3.1.1"
+  }
+}
