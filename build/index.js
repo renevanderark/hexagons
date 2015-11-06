@@ -19830,7 +19830,7 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var snaps = [-360, -300, -240, -180, -120, -60, 0, 60, 120, 180, 240, 300, 360];
+var snaps = [-600, -540, -480, -420, -360, -300, -240, -180, -120, -60, 0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600];
 
 var snapTo = function snapTo(num) {
 	var curr = snaps[0];
@@ -19880,7 +19880,7 @@ var Hexagon = (function (_React$Component) {
 		value: function onMouseMove(ev) {
 			if (this.mouseState === "DOWN") {
 				var newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
-				this.props.onRotate(Math.floor(this.initAngle - newAngle));
+				this.props.onRotate(this.lastAngle + Math.floor(this.initAngle - newAngle));
 			}
 			return ev.preventDefault;
 		}
@@ -19889,7 +19889,7 @@ var Hexagon = (function (_React$Component) {
 		value: function onMouseUp(ev) {
 			if (this.mouseState === "DOWN") {
 				var newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
-				this.props.onRotate(snapTo(Math.floor(this.initAngle - newAngle)));
+				this.props.onRotate(snapTo(this.lastAngle + Math.floor(this.initAngle - newAngle)));
 			}
 			this.mouseState = "UP";
 			return ev.preventDefault;
@@ -19898,6 +19898,7 @@ var Hexagon = (function (_React$Component) {
 		key: "onMouseDown",
 		value: function onMouseDown(ev) {
 			this.mouseState = "DOWN";
+			this.lastAngle = this.props.rotation;
 			this.initAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
 			return ev.preventDefault;
 		}
@@ -19913,7 +19914,7 @@ var Hexagon = (function (_React$Component) {
 				"g",
 				{ onMouseDown: this.onMouseDown.bind(this), transform: this.setTransform() },
 				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75, 260 0,  130 75,  0\t225, 0", stroke: "#aaa", strokeWidth: ".1" }),
-				_react2["default"].createElement("rect", { fill: "red", x: "10", y: "10", width: "10", height: "10" })
+				_react2["default"].createElement("rect", { fill: "red", x: "100", y: "100", width: "10", height: "10" })
 			);
 		}
 	}]);
