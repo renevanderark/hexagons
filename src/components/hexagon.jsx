@@ -26,6 +26,8 @@ const normalizeAngle = (angle) => {
 
 const getAngle = (dX, dY) => normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 
+
+
 class Hexagon extends React.Component {
 	constructor(props) {
 		super(props);
@@ -38,18 +40,24 @@ class Hexagon extends React.Component {
 	}
 
 	componentDidMount() {
+		React.initializeTouchEvents(true);
 		window.addEventListener("mousemove", this.mouseMoveListener);
+		window.addEventListener("touchmove", this.mouseMoveListener);
 		window.addEventListener("mouseup", this.mouseUpListener);
+		window.addEventListener("touchend", this.mouseUpListener);
 	}
 
 	componentWillUnmount() {
 		window.removeEventListener("mousemove", this.mouseMoveListener);
+		window.removeEventListener("touchmove", this.mouseMoveListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);
+		window.removeEventListener("touchend", this.mouseUpListener);
 	}
 
 	onMouseMove(ev) {
 		if(this.mouseState === "DOWN") {
-			let newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
+			let {clientX, clientY} = ev.touches ? ev.touches[0] : ev;
+			let newAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 			this.props.onRotate(this.lastAngle + Math.floor(this.initAngle - newAngle));
 		}
 		return ev.preventDefault;
@@ -57,8 +65,7 @@ class Hexagon extends React.Component {
 
 	onMouseUp(ev) {
 		if(this.mouseState === "DOWN") {
-			let newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
-			this.props.onRotate(snapTo(normalizeAngle(this.lastAngle + Math.floor(this.initAngle - newAngle))));
+			this.props.onRotate(snapTo(normalizeAngle(this.props.rotation)));
 		}
 		this.mouseState = "UP";
 		return ev.preventDefault;
@@ -66,8 +73,9 @@ class Hexagon extends React.Component {
 
 	onMouseDown(ev) {
 		this.mouseState = "DOWN";
+		let {clientX, clientY} = ev.touches ? ev.touches[0] : ev;
 		this.lastAngle = this.props.rotation;
-		this.initAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
+		this.initAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 		return ev.preventDefault;
 	}
 
@@ -77,7 +85,7 @@ class Hexagon extends React.Component {
 
 	render() {
 		return (
-			<g onMouseDown={this.onMouseDown.bind(this)} transform={this.setTransform()}>
+			<g onMouseDown={this.onMouseDown.bind(this)} onTouchStart={this.onMouseDown.bind(this)} transform={this.setTransform()}>
 				{this.props.tubes.map((tube, i) => <Tube key={i} {...tube} /> )}
 				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#aaa" strokeWidth=".1" />
 			</g>
