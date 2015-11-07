@@ -19816,6 +19816,8 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
@@ -19830,7 +19832,11 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var snaps = [-600, -540, -480, -420, -360, -300, -240, -180, -120, -60, 0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600];
+var _tube = _dereq_("./tube");
+
+var _tube2 = _interopRequireDefault(_tube);
+
+var snaps = [-180, -120, -60, 0, 60, 120, 180];
 
 var snapTo = function snapTo(num) {
 	var curr = snaps[0];
@@ -19845,8 +19851,17 @@ var snapTo = function snapTo(num) {
 	return curr;
 };
 
+var normalizeAngle = function normalizeAngle(angle) {
+	angle %= 360;
+	angle = (angle + 360) % 360;
+	if (angle > 180) {
+		angle -= 360;
+	}
+	return angle;
+};
+
 var getAngle = function getAngle(dX, dY) {
-	return Math.atan2(dX, dY) * 180 / Math.PI;
+	return normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 };
 
 var Hexagon = (function (_React$Component) {
@@ -19861,6 +19876,7 @@ var Hexagon = (function (_React$Component) {
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseState = "UP";
 		this.initAngle = 0;
+		this.lastAngle = 0;
 	}
 
 	_createClass(Hexagon, [{
@@ -19889,7 +19905,7 @@ var Hexagon = (function (_React$Component) {
 		value: function onMouseUp(ev) {
 			if (this.mouseState === "DOWN") {
 				var newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
-				this.props.onRotate(snapTo(this.lastAngle + Math.floor(this.initAngle - newAngle)));
+				this.props.onRotate(snapTo(normalizeAngle(this.lastAngle + Math.floor(this.initAngle - newAngle))));
 			}
 			this.mouseState = "UP";
 			return ev.preventDefault;
@@ -19913,8 +19929,10 @@ var Hexagon = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"g",
 				{ onMouseDown: this.onMouseDown.bind(this), transform: this.setTransform() },
-				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75, 260 0,  130 75,  0\t225, 0", stroke: "#aaa", strokeWidth: ".1" }),
-				_react2["default"].createElement("rect", { fill: "red", x: "100", y: "100", width: "10", height: "10" })
+				this.props.tubes.map(function (tube, i) {
+					return _react2["default"].createElement(_tube2["default"], _extends({ key: i }, tube));
+				}),
+				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#aaa", strokeWidth: ".1" })
 			);
 		}
 	}]);
@@ -19925,13 +19943,76 @@ var Hexagon = (function (_React$Component) {
 Hexagon.propTypes = {
 	onRotate: _react2["default"].PropTypes.func,
 	position: _react2["default"].PropTypes.array,
-	rotation: _react2["default"].PropTypes.number
+	rotation: _react2["default"].PropTypes.number,
+	tubes: _react2["default"].PropTypes.array
+};
+
+Hexagon.defaultProps = {
+	tubes: []
 };
 
 exports["default"] = Hexagon;
 module.exports = exports["default"];
 
-},{"react":155}],158:[function(_dereq_,module,exports){
+},{"./tube":158,"react":155}],158:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = _dereq_("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var dims = [[37.5, 65], [150, 0], [262.5, 65], [262.5, 195], [150, 260], [37.5, 195]];
+
+var Tube = (function (_React$Component) {
+	_inherits(Tube, _React$Component);
+
+	function Tube() {
+		_classCallCheck(this, Tube);
+
+		_get(Object.getPrototypeOf(Tube.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(Tube, [{
+		key: "makePoints",
+		value: function makePoints() {
+			var from = dims[this.props.from];
+			var to = dims[this.props.to];
+			var bend = [150, 130]; // TODO: make smart
+			return "M " + from.join(",") + " Q " + bend.join(",") + " " + to.join(",");
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			return _react2["default"].createElement("path", { d: this.makePoints(), style: { strokeLinejoin: "round" }, stroke: "rgba(0,0,0,.3)", fill: "transparent", strokeWidth: "20" });
+		}
+	}]);
+
+	return Tube;
+})(_react2["default"].Component);
+
+Tube.propTypes = {
+	from: _react2["default"].PropTypes.number,
+	to: _react2["default"].PropTypes.number
+};
+
+exports["default"] = Tube;
+module.exports = exports["default"];
+
+},{"react":155}],159:[function(_dereq_,module,exports){
 "use strict";
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
@@ -19984,9 +20065,9 @@ var App = (function (_React$Component) {
 				{ height: "10000", onMouseDown: function (ev) {
 						return ev.preventDefault();
 					}, width: "10000" },
-				_react2["default"].createElement(_componentsHexagon2["default"], { onRotate: this.onRotate.bind(this, 0), position: [0, 0], rotation: this.state.rotations[0] }),
-				_react2["default"].createElement(_componentsHexagon2["default"], { onRotate: this.onRotate.bind(this, 1), position: [225, 130], rotation: this.state.rotations[1] }),
-				_react2["default"].createElement(_componentsHexagon2["default"], { onRotate: this.onRotate.bind(this, 2), position: [0, 260], rotation: this.state.rotations[2] })
+				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 1, to: 3 }, { from: 5, to: 2 }, { from: 4, to: 0 }], onRotate: this.onRotate.bind(this, 0), position: [0, 0], rotation: this.state.rotations[0] }),
+				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 1, to: 2 }], onRotate: this.onRotate.bind(this, 1), position: [225, 130], rotation: this.state.rotations[1] }),
+				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 4, to: 5 }], onRotate: this.onRotate.bind(this, 2), position: [0, 260], rotation: this.state.rotations[2] })
 			);
 		}
 	}]);
@@ -19996,5 +20077,5 @@ var App = (function (_React$Component) {
 
 _react2["default"].render(_react2["default"].createElement(App, null), document.body);
 
-},{"./components/hexagon":157,"react":155}]},{},[158])(158)
+},{"./components/hexagon":157,"react":155}]},{},[159])(159)
 });

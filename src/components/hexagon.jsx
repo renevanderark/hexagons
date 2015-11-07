@@ -1,6 +1,8 @@
 import React from "react";
+import Tube from "./tube";
 
-const snaps = [-600, -540, -480, -420, -360, -300, -240, -180, -120, -60, 0, 60, 120, 180, 240, 300, 360, 420, 480, 540, 600];
+
+const snaps = [-180, -120, -60, 0, 60, 120, 180];
 
 const snapTo = (num) => {
 	var curr = snaps[0];
@@ -15,7 +17,14 @@ const snapTo = (num) => {
 	return curr;
 };
 
-const getAngle = (dX, dY) => Math.atan2(dX, dY) * 180 / Math.PI;
+const normalizeAngle = (angle) => {
+	angle %= 360; 
+	angle = (angle + 360) % 360;  
+	if (angle > 180) { angle -= 360; }
+    return angle;
+}
+
+const getAngle = (dX, dY) => normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 
 class Hexagon extends React.Component {
 	constructor(props) {
@@ -25,6 +34,7 @@ class Hexagon extends React.Component {
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseState = "UP";
 		this.initAngle = 0;
+		this.lastAngle = 0;
 	}
 
 	componentDidMount() {
@@ -48,7 +58,7 @@ class Hexagon extends React.Component {
 	onMouseUp(ev) {
 		if(this.mouseState === "DOWN") {
 			let newAngle = getAngle(ev.pageX - this.center.x, ev.pageY - this.center.y);
-			this.props.onRotate(snapTo(this.lastAngle + Math.floor(this.initAngle - newAngle)));
+			this.props.onRotate(snapTo(normalizeAngle(this.lastAngle + Math.floor(this.initAngle - newAngle))));
 		}
 		this.mouseState = "UP";
 		return ev.preventDefault;
@@ -68,8 +78,8 @@ class Hexagon extends React.Component {
 	render() {
 		return (
 			<g onMouseDown={this.onMouseDown.bind(this)} transform={this.setTransform()}>
-				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75, 260 0,  130 75,  0	225, 0" stroke="#aaa" strokeWidth=".1" />
-				<rect fill="red" x="100" y="100" width="10" height="10" />
+				{this.props.tubes.map((tube, i) => <Tube key={i} {...tube} /> )}
+				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#aaa" strokeWidth=".1" />
 			</g>
 		);
 	}
@@ -78,7 +88,12 @@ class Hexagon extends React.Component {
 Hexagon.propTypes = {
 	onRotate: React.PropTypes.func,
 	position: React.PropTypes.array,
-	rotation: React.PropTypes.number
+	rotation: React.PropTypes.number,
+	tubes: React.PropTypes.array
+};
+
+Hexagon.defaultProps = {
+	tubes: []
 };
 
 export default Hexagon;
