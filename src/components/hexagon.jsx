@@ -26,7 +26,12 @@ const normalizeAngle = (angle) => {
 
 const getAngle = (dX, dY) => normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 
-
+const getEventPos = (ev) => {
+	return {
+		clientX: (window.pageXOffset || document.documentElement.scrollLeft) - (document.documentElement.clientLeft || 0) + ev.clientX,
+		clientY: (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0) + ev.clientY
+	};
+};
 
 class Hexagon extends React.Component {
 	constructor(props) {
@@ -56,7 +61,7 @@ class Hexagon extends React.Component {
 
 	onMouseMove(ev) {
 		if(this.mouseState === "DOWN") {
-			let {clientX, clientY} = ev.touches ? ev.touches[0] : ev;
+			let {clientX, clientY} = getEventPos(ev.touches ? ev.touches[0] : ev);
 			let newAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 			this.props.onRotate(this.lastAngle + Math.floor(this.initAngle - newAngle));
 		}
@@ -73,7 +78,7 @@ class Hexagon extends React.Component {
 
 	onMouseDown(ev) {
 		this.mouseState = "DOWN";
-		let {clientX, clientY} = ev.touches ? ev.touches[0] : ev;
+		let {clientX, clientY} = getEventPos(ev.touches ? ev.touches[0] : ev);
 		this.lastAngle = this.props.rotation;
 		this.initAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 		return ev.preventDefault;

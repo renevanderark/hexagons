@@ -1,28 +1,51 @@
 import React from "react";
 import Hexagon from "./components/hexagon";
 
+const makeGrid = (w, h) => {
+	let grid = {};
+	for(let x = 0, i = 0; x < w; x++) {
+		for(let y = 0; y < h; y++, i++) {
+			grid[i] = {
+				x: x,
+				y: y,
+				rotation: 0,
+				tubes: [{from: 1, to: 3}, {from: 5, to: 2}, {from: 4, to: 0}]
+			}
+		}
+	}
+	return grid;
+}
+
 class App extends React.Component {
 
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			rotations: {0: 0, 1: 0, 2: 0}
+			grid: makeGrid(4,4)
 		};
 	}
 
 	onRotate(index, degs) {
 		this.setState({
-			rotations: {...this.state.rotations, ...{[index]: degs}}
+			grid: {...this.state.grid, ...{[index]: {...this.state.grid[index], rotation: degs}}}
 		});
+	}
+
+	renderGrid() {
+		return Object.keys(this.state.grid).map((k) => (
+			<Hexagon 
+				onRotate={this.onRotate.bind(this, k)}
+				position={[this.state.grid[k].x * 225, (this.state.grid[k].y * 260) + ((this.state.grid[k].x % 2) * 130) ]}
+				rotation={this.state.grid[k].rotation}
+				tubes={this.state.grid[k].tubes} />
+		));
 	}
 
 	render() {
 		return (
 			<svg height="10000" onMouseDown={(ev) => ev.preventDefault()} onTouchStart={(ev) => ev.preventDefault()} width="10000">
-				<Hexagon tubes={[{from: 1, to: 3}, {from: 5, to: 2}, {from: 4, to: 0}]} onRotate={this.onRotate.bind(this, 0)} position={[0, 0]} rotation={this.state.rotations[0]} />
-				<Hexagon tubes={[{from: 1, to: 2}]} onRotate={this.onRotate.bind(this, 1)} position={[225, 130]} rotation={this.state.rotations[1]} />
-				<Hexagon tubes={[{from: 4, to: 5}]}  onRotate={this.onRotate.bind(this, 2)} position={[0, 260]} rotation={this.state.rotations[2]} />
+				{this.renderGrid()}
 			</svg>
 		);
 	}

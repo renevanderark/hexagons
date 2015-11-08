@@ -19864,6 +19864,13 @@ var getAngle = function getAngle(dX, dY) {
 	return normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 };
 
+var getEventPos = function getEventPos(ev) {
+	return {
+		clientX: (window.pageXOffset || document.documentElement.scrollLeft) - (document.documentElement.clientLeft || 0) + ev.clientX,
+		clientY: (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0) + ev.clientY
+	};
+};
+
 var Hexagon = (function (_React$Component) {
 	_inherits(Hexagon, _React$Component);
 
@@ -19900,10 +19907,10 @@ var Hexagon = (function (_React$Component) {
 		key: "onMouseMove",
 		value: function onMouseMove(ev) {
 			if (this.mouseState === "DOWN") {
-				var _ref = ev.touches ? ev.touches[0] : ev;
+				var _getEventPos = getEventPos(ev.touches ? ev.touches[0] : ev);
 
-				var clientX = _ref.clientX;
-				var clientY = _ref.clientY;
+				var clientX = _getEventPos.clientX;
+				var clientY = _getEventPos.clientY;
 
 				var newAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 				this.props.onRotate(this.lastAngle + Math.floor(this.initAngle - newAngle));
@@ -19924,10 +19931,10 @@ var Hexagon = (function (_React$Component) {
 		value: function onMouseDown(ev) {
 			this.mouseState = "DOWN";
 
-			var _ref2 = ev.touches ? ev.touches[0] : ev;
+			var _getEventPos2 = getEventPos(ev.touches ? ev.touches[0] : ev);
 
-			var clientX = _ref2.clientX;
-			var clientY = _ref2.clientY;
+			var clientX = _getEventPos2.clientX;
+			var clientY = _getEventPos2.clientY;
 
 			this.lastAngle = this.props.rotation;
 			this.initAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
@@ -20052,6 +20059,21 @@ var _componentsHexagon = _dereq_("./components/hexagon");
 
 var _componentsHexagon2 = _interopRequireDefault(_componentsHexagon);
 
+var makeGrid = function makeGrid(w, h) {
+	var grid = {};
+	for (var x = 0, i = 0; x < w; x++) {
+		for (var y = 0; y < h; y++, i++) {
+			grid[i] = {
+				x: x,
+				y: y,
+				rotation: 0,
+				tubes: [{ from: 1, to: 3 }, { from: 5, to: 2 }, { from: 4, to: 0 }]
+			};
+		}
+	}
+	return grid;
+};
+
 var App = (function (_React$Component) {
 	_inherits(App, _React$Component);
 
@@ -20061,7 +20083,7 @@ var App = (function (_React$Component) {
 		_get(Object.getPrototypeOf(App.prototype), "constructor", this).call(this, props);
 
 		this.state = {
-			rotations: { 0: 0, 1: 0, 2: 0 }
+			grid: makeGrid(4, 4)
 		};
 	}
 
@@ -20069,7 +20091,20 @@ var App = (function (_React$Component) {
 		key: "onRotate",
 		value: function onRotate(index, degs) {
 			this.setState({
-				rotations: _extends({}, this.state.rotations, _defineProperty({}, index, degs))
+				grid: _extends({}, this.state.grid, _defineProperty({}, index, _extends({}, this.state.grid[index], { rotation: degs })))
+			});
+		}
+	}, {
+		key: "renderGrid",
+		value: function renderGrid() {
+			var _this = this;
+
+			return Object.keys(this.state.grid).map(function (k) {
+				return _react2["default"].createElement(_componentsHexagon2["default"], {
+					onRotate: _this.onRotate.bind(_this, k),
+					position: [_this.state.grid[k].x * 225, _this.state.grid[k].y * 260 + _this.state.grid[k].x % 2 * 130],
+					rotation: _this.state.grid[k].rotation,
+					tubes: _this.state.grid[k].tubes });
 			});
 		}
 	}, {
@@ -20082,9 +20117,7 @@ var App = (function (_React$Component) {
 					}, onTouchStart: function (ev) {
 						return ev.preventDefault();
 					}, width: "10000" },
-				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 1, to: 3 }, { from: 5, to: 2 }, { from: 4, to: 0 }], onRotate: this.onRotate.bind(this, 0), position: [0, 0], rotation: this.state.rotations[0] }),
-				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 1, to: 2 }], onRotate: this.onRotate.bind(this, 1), position: [225, 130], rotation: this.state.rotations[1] }),
-				_react2["default"].createElement(_componentsHexagon2["default"], { tubes: [{ from: 4, to: 5 }], onRotate: this.onRotate.bind(this, 2), position: [0, 260], rotation: this.state.rotations[2] })
+				this.renderGrid()
 			);
 		}
 	}]);
