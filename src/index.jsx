@@ -33,8 +33,9 @@ class App extends React.Component {
 	}
 
 	renderGrid() {
-		return Object.keys(this.state.grid).map((k) => (
-			<Hexagon 
+		return Object.keys(this.state.grid).map((k, i) => (
+			<Hexagon
+				key={i}
 				onRotate={this.onRotate.bind(this, k)}
 				position={[this.state.grid[k].x * 225, (this.state.grid[k].y * 260) + ((this.state.grid[k].x % 2) * 130) ]}
 				rotation={this.state.grid[k].rotation}

@@ -59,6 +59,10 @@ class Hexagon extends React.Component {
 		window.removeEventListener("touchend", this.mouseUpListener);
 	}
 
+	shouldComponentUpdate(nextProps) {
+		return this.props.rotation !== nextProps.rotation;
+	}
+
 	onMouseMove(ev) {
 		if(this.mouseState === "DOWN") {
 			let {clientX, clientY} = getEventPos(ev.touches ? ev.touches[0] : ev);

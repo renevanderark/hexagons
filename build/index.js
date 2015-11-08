@@ -19904,6 +19904,11 @@ var Hexagon = (function (_React$Component) {
 			window.removeEventListener("touchend", this.mouseUpListener);
 		}
 	}, {
+		key: "shouldComponentUpdate",
+		value: function shouldComponentUpdate(nextProps) {
+			return this.props.rotation !== nextProps.rotation;
+		}
+	}, {
 		key: "onMouseMove",
 		value: function onMouseMove(ev) {
 			if (this.mouseState === "DOWN") {
@@ -20099,8 +20104,9 @@ var App = (function (_React$Component) {
 		value: function renderGrid() {
 			var _this = this;
 
-			return Object.keys(this.state.grid).map(function (k) {
+			return Object.keys(this.state.grid).map(function (k, i) {
 				return _react2["default"].createElement(_componentsHexagon2["default"], {
+					key: i,
 					onRotate: _this.onRotate.bind(_this, k),
 					position: [_this.state.grid[k].x * 225, _this.state.grid[k].y * 260 + _this.state.grid[k].x % 2 * 130],
 					rotation: _this.state.grid[k].rotation,
