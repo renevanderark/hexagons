@@ -1,6 +1,23 @@
 import React from "react";
 import Hexagon from "./components/hexagon";
 
+const randomTubes = () => {
+	let amount = Math.floor(Math.random() * 3) + 1;
+	let taken = [];
+	let tubes = [];
+	for(let i = 0; i < amount; i++) {
+		let from, to;
+		while (taken.indexOf(from = Math.floor(Math.random() * 6)) > -1) { }
+		taken.push(from);
+		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) { }
+		taken.push(to);
+		tubes.push({from: from, to: to});
+	}
+
+	return tubes;
+};
+
+
 const makeGrid = (w, h) => {
 	let grid = {};
 	for(let x = 0, i = 0; x < w; x++) {
@@ -9,7 +26,7 @@ const makeGrid = (w, h) => {
 				x: x,
 				y: y,
 				rotation: 0,
-				tubes: [{from: 1, to: 3}, {from: 5, to: 2}, {from: 4, to: 0}]
+				tubes: randomTubes()
 			}
 		}
 	}
@@ -21,8 +38,11 @@ class App extends React.Component {
 	constructor(props) {
 		super(props);
 
+		let dims = 4;
 		this.state = {
-			grid: makeGrid(4,4)
+			width: dims,
+			height: dims,
+			grid: makeGrid(dims, dims)
 		};
 	}
 
@@ -45,7 +65,11 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<svg height="10000" onMouseDown={(ev) => ev.preventDefault()} onTouchStart={(ev) => ev.preventDefault()} width="10000">
+			<svg 
+				height={this.state.height * 260 + 130}
+				onMouseDown={(ev) => ev.preventDefault()}
+				onTouchStart={(ev) => ev.preventDefault()}
+				width={this.state.width * 225 + 75}>
 				{this.renderGrid()}
 			</svg>
 		);

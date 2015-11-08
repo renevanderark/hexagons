@@ -20064,6 +20064,23 @@ var _componentsHexagon = _dereq_("./components/hexagon");
 
 var _componentsHexagon2 = _interopRequireDefault(_componentsHexagon);
 
+var randomTubes = function randomTubes() {
+	var amount = Math.floor(Math.random() * 3) + 1;
+	var taken = [];
+	var tubes = [];
+	for (var i = 0; i < amount; i++) {
+		var from = undefined,
+		    to = undefined;
+		while (taken.indexOf(from = Math.floor(Math.random() * 6)) > -1) {}
+		taken.push(from);
+		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) {}
+		taken.push(to);
+		tubes.push({ from: from, to: to });
+	}
+
+	return tubes;
+};
+
 var makeGrid = function makeGrid(w, h) {
 	var grid = {};
 	for (var x = 0, i = 0; x < w; x++) {
@@ -20072,7 +20089,7 @@ var makeGrid = function makeGrid(w, h) {
 				x: x,
 				y: y,
 				rotation: 0,
-				tubes: [{ from: 1, to: 3 }, { from: 5, to: 2 }, { from: 4, to: 0 }]
+				tubes: randomTubes()
 			};
 		}
 	}
@@ -20087,8 +20104,11 @@ var App = (function (_React$Component) {
 
 		_get(Object.getPrototypeOf(App.prototype), "constructor", this).call(this, props);
 
+		var dims = 4;
 		this.state = {
-			grid: makeGrid(4, 4)
+			width: dims,
+			height: dims,
+			grid: makeGrid(dims, dims)
 		};
 	}
 
@@ -20118,11 +20138,15 @@ var App = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"svg",
-				{ height: "10000", onMouseDown: function (ev) {
+				{
+					height: this.state.height * 260 + 130,
+					onMouseDown: function (ev) {
 						return ev.preventDefault();
-					}, onTouchStart: function (ev) {
+					},
+					onTouchStart: function (ev) {
 						return ev.preventDefault();
-					}, width: "10000" },
+					},
+					width: this.state.width * 225 + 75 },
 				this.renderGrid()
 			);
 		}
