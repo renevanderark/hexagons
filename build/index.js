@@ -20723,8 +20723,33 @@ var makeGrid = function makeGrid(w, h) {
 	return grid;
 };
 
-var getNeighbours = function getNeighbours(grid, piece) {
-	console.log(piece);
+var absRotation = function absRotation(degs) {
+	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
+};
+var absConnector = function absConnector(absRot) {
+	return absRot > 5 ? absRot - 6 : absRot;
+};
+var connectsAt = function connectsAt(num) {
+	return absConnector(num + 3);
+};
+
+var neighboursFor = function neighboursFor(p, grid) {
+	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar, i) {
+		return [ar[0] + p.x, ar[1] + p.y, i];
+	}).map(function (d) {
+		return [d[2], Object.keys(grid).filter(function (k) {
+			return grid[k].x === d[0] && grid[k].y === d[1];
+		})[0] || null, connectsAt(d[2])];
+	}).filter(function (k) {
+		return k[1] !== null;
+	});
+};
+
+var getConnections = function getConnections(p, grid) {
+	console.log("1: ", neighboursFor(p, grid));
+	console.log("2: ", neighboursFor(p, grid).map(function (n) {
+		return [n[0], n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))];
+	}));
 };
 
 var initialState = {
@@ -20741,8 +20766,9 @@ exports["default"] = function (state, action) {
 		case "ROTATE_GRID_PIECE":
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
-			getNeighbours(state.grid, gridPiece);
-			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
+			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
+			getConnections(gridPiece, newState.grid);
+			return newState;
 		default:
 			return state;
 	}
