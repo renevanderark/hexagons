@@ -18,18 +18,18 @@ const snapTo = (num) => {
 };
 
 const normalizeAngle = (angle) => {
-	angle %= 360; 
-	angle = (angle + 360) % 360;  
+	angle %= 360;
+	angle = (angle + 360) % 360;
 	if (angle > 180) { angle -= 360; }
     return angle;
-}
+};
 
 const getAngle = (dX, dY) => normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
 
 const getEventPos = (ev) => {
 	return {
 		clientX: (window.pageXOffset || document.documentElement.scrollLeft) - (document.documentElement.clientLeft || 0) + ev.clientX,
-		clientY: (window.pageYOffset || document.documentElement.scrollTop)  - (document.documentElement.clientTop || 0) + ev.clientY
+		clientY: (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0) + ev.clientY
 	};
 };
 
@@ -52,15 +52,15 @@ class Hexagon extends React.Component {
 		window.addEventListener("touchend", this.mouseUpListener);
 	}
 
+	shouldComponentUpdate(nextProps) {
+		return this.props.rotation !== nextProps.rotation;
+	}
+
 	componentWillUnmount() {
 		window.removeEventListener("mousemove", this.mouseMoveListener);
 		window.removeEventListener("touchmove", this.mouseMoveListener);
 		window.removeEventListener("mouseup", this.mouseUpListener);
 		window.removeEventListener("touchend", this.mouseUpListener);
-	}
-
-	shouldComponentUpdate(nextProps) {
-		return this.props.rotation !== nextProps.rotation;
 	}
 
 	onMouseMove(ev) {

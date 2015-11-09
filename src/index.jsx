@@ -27,11 +27,12 @@ const makeGrid = (w, h) => {
 				y: y,
 				rotation: 0,
 				tubes: randomTubes()
-			}
+			};
 		}
 	}
 	return grid;
-}
+};
+
 
 class App extends React.Component {
 
@@ -65,7 +66,7 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<svg 
+			<svg
 				height={this.state.height * 260 + 130}
 				onMouseDown={(ev) => ev.preventDefault()}
 				onTouchStart={(ev) => ev.preventDefault()}

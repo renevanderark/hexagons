@@ -19896,17 +19896,17 @@ var Hexagon = (function (_React$Component) {
 			window.addEventListener("touchend", this.mouseUpListener);
 		}
 	}, {
+		key: "shouldComponentUpdate",
+		value: function shouldComponentUpdate(nextProps) {
+			return this.props.rotation !== nextProps.rotation;
+		}
+	}, {
 		key: "componentWillUnmount",
 		value: function componentWillUnmount() {
 			window.removeEventListener("mousemove", this.mouseMoveListener);
 			window.removeEventListener("touchmove", this.mouseMoveListener);
 			window.removeEventListener("mouseup", this.mouseUpListener);
 			window.removeEventListener("touchend", this.mouseUpListener);
-		}
-	}, {
-		key: "shouldComponentUpdate",
-		value: function shouldComponentUpdate(nextProps) {
-			return this.props.rotation !== nextProps.rotation;
 		}
 	}, {
 		key: "onMouseMove",
@@ -20018,13 +20018,13 @@ var Tube = (function (_React$Component) {
 		value: function makePoints() {
 			var from = dims[this.props.from];
 			var to = dims[this.props.to];
-			var bend = [150, 130]; // TODO: make smart
+			var bend = [150, 130];
 			return "M " + from.join(",") + " Q " + bend.join(",") + " " + to.join(",");
 		}
 	}, {
 		key: "render",
 		value: function render() {
-			return _react2["default"].createElement("path", { d: this.makePoints(), style: { strokeLinejoin: "round" }, stroke: "rgba(0,0,0,.3)", fill: "transparent", strokeWidth: "20" });
+			return _react2["default"].createElement("path", { d: this.makePoints(), fill: "transparent", stroke: "rgba(0,0,0,.3)", strokeWidth: "20" });
 		}
 	}]);
 
