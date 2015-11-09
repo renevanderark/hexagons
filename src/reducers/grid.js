@@ -25,6 +25,10 @@ const makeGrid = (w, h) => {
 	return grid;
 };
 
+const getNeighbours = (grid, piece) => {
+	console.log(piece);
+};
+
 
 let initialState = {
 	width: 4,
@@ -33,9 +37,13 @@ let initialState = {
 };
 
 export default function(state = initialState, action) {
+	let gridPiece = {...state.grid[action.index], rotation: action.degs};
 	switch(action.type) {
 		case "ROTATE_GRID_PIECE":
-			return {...state, grid: {...state.grid, ...{[action.index]: {...state.grid[action.index], rotation: action.degs}}}};
+			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
+		case "RELEASE_GRID_PIECE":
+			getNeighbours(state.grid, gridPiece);
+			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		default:
 			return state;
 	}

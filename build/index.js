@@ -20477,7 +20477,7 @@ var Hexagon = (function (_React$Component) {
 		key: "onMouseUp",
 		value: function onMouseUp(ev) {
 			if (this.mouseState === "DOWN") {
-				this.props.onRotate(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
+				this.props.onRelease(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
 			}
 			this.mouseState = "UP";
 			return ev.preventDefault;
@@ -20521,6 +20521,7 @@ var Hexagon = (function (_React$Component) {
 
 Hexagon.propTypes = {
 	gridPiece: _react2["default"].PropTypes.object,
+	onRelease: _react2["default"].PropTypes.func,
 	onRotate: _react2["default"].PropTypes.func,
 	tubes: _react2["default"].PropTypes.array
 };
@@ -20641,11 +20642,6 @@ var App = (function (_React$Component) {
 			this.setState(_reducersStore2["default"].getState());
 		}
 	}, {
-		key: "onRotate",
-		value: function onRotate(index, degs) {
-			_reducersStore2["default"].dispatch({ type: "ROTATE_GRID_PIECE", index: index, degs: degs });
-		}
-	}, {
 		key: "renderGrid",
 		value: function renderGrid() {
 			var _this = this;
@@ -20654,7 +20650,12 @@ var App = (function (_React$Component) {
 				return _react2["default"].createElement(_componentsHexagon2["default"], {
 					gridPiece: _this.state.grid[k],
 					key: i,
-					onRotate: _this.onRotate.bind(_this, k),
+					onRelease: function (degs) {
+						return _reducersStore2["default"].dispatch({ type: "RELEASE_GRID_PIECE", index: k, degs: degs });
+					},
+					onRotate: function (degs) {
+						return _reducersStore2["default"].dispatch({ type: "ROTATE_GRID_PIECE", index: k, degs: degs });
+					},
 					position: [_this.state.grid[k].x * 225, _this.state.grid[k].y * 260 + _this.state.grid[k].x % 2 * 130],
 					rotation: _this.state.grid[k].rotation,
 					tubes: _this.state.grid[k].tubes });
@@ -20722,6 +20723,10 @@ var makeGrid = function makeGrid(w, h) {
 	return grid;
 };
 
+var getNeighbours = function getNeighbours(grid, piece) {
+	console.log(piece);
+};
+
 var initialState = {
 	width: 4,
 	height: 4,
@@ -20731,9 +20736,13 @@ var initialState = {
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
 
+	var gridPiece = _extends({}, state.grid[action.index], { rotation: action.degs });
 	switch (action.type) {
 		case "ROTATE_GRID_PIECE":
-			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, _extends({}, state.grid[action.index], { rotation: action.degs }))) });
+			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
+		case "RELEASE_GRID_PIECE":
+			getNeighbours(state.grid, gridPiece);
+			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		default:
 			return state;
 	}

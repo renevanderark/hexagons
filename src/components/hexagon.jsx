@@ -76,7 +76,7 @@ class Hexagon extends React.Component {
 
 	onMouseUp(ev) {
 		if(this.mouseState === "DOWN") {
-			this.props.onRotate(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
+			this.props.onRelease(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
 		}
 		this.mouseState = "UP";
 		return ev.preventDefault;
@@ -107,6 +107,7 @@ class Hexagon extends React.Component {
 
 Hexagon.propTypes = {
 	gridPiece: React.PropTypes.object,
+	onRelease: React.PropTypes.func,
 	onRotate: React.PropTypes.func,
 	tubes: React.PropTypes.array
 };
