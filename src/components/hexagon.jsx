@@ -36,7 +36,9 @@ const getEventPos = (ev) => {
 class Hexagon extends React.Component {
 	constructor(props) {
 		super(props);
-		this.center = {x: this.props.position[0] + 150, y: this.props.position[1] + 150};
+
+		let position = [this.props.gridPiece.x * 225, (this.props.gridPiece.y * 260) + ((this.props.gridPiece.x % 2) * 130) ];
+		this.center = {x: position[0] + 150, y: position[1] + 150};
 		this.mouseMoveListener = this.onMouseMove.bind(this);
 		this.mouseUpListener = this.onMouseUp.bind(this);
 		this.mouseState = "UP";
@@ -53,7 +55,7 @@ class Hexagon extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		return this.props.rotation !== nextProps.rotation;
+		return this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
 	}
 
 	componentWillUnmount() {
@@ -74,7 +76,7 @@ class Hexagon extends React.Component {
 
 	onMouseUp(ev) {
 		if(this.mouseState === "DOWN") {
-			this.props.onRotate(snapTo(normalizeAngle(this.props.rotation)));
+			this.props.onRotate(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
 		}
 		this.mouseState = "UP";
 		return ev.preventDefault;
@@ -83,13 +85,14 @@ class Hexagon extends React.Component {
 	onMouseDown(ev) {
 		this.mouseState = "DOWN";
 		let {clientX, clientY} = getEventPos(ev.touches ? ev.touches[0] : ev);
-		this.lastAngle = this.props.rotation;
+		this.lastAngle = this.props.gridPiece.rotation;
 		this.initAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
 		return ev.preventDefault;
 	}
 
 	setTransform() {
-		return `translate(${this.props.position[0]}, ${this.props.position[1]}) rotate(${this.props.rotation}, 150, 130)`;
+		let position = [this.props.gridPiece.x * 225, (this.props.gridPiece.y * 260) + ((this.props.gridPiece.x % 2) * 130) ];
+		return `translate(${position[0]}, ${position[1]}) rotate(${this.props.gridPiece.rotation}, 150, 130)`;
 	}
 
 	render() {
@@ -103,9 +106,8 @@ class Hexagon extends React.Component {
 }
 
 Hexagon.propTypes = {
+	gridPiece: React.PropTypes.object,
 	onRotate: React.PropTypes.func,
-	position: React.PropTypes.array,
-	rotation: React.PropTypes.number,
 	tubes: React.PropTypes.array
 };
 

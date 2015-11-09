@@ -1,61 +1,36 @@
 import React from "react";
 import Hexagon from "./components/hexagon";
+import store from "./reducers/store";
 
-const randomTubes = () => {
-	let amount = Math.floor(Math.random() * 3) + 1;
-	let taken = [];
-	let tubes = [];
-	for(let i = 0; i < amount; i++) {
-		let from, to;
-		while (taken.indexOf(from = Math.floor(Math.random() * 6)) > -1) { }
-		taken.push(from);
-		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) { }
-		taken.push(to);
-		tubes.push({from: from, to: to});
-	}
-
-	return tubes;
-};
-
-
-const makeGrid = (w, h) => {
-	let grid = {};
-	for(let x = 0, i = 0; x < w; x++) {
-		for(let y = 0; y < h; y++, i++) {
-			grid[i] = {
-				x: x,
-				y: y,
-				rotation: 0,
-				tubes: randomTubes()
-			};
-		}
-	}
-	return grid;
-};
 
 
 class App extends React.Component {
 
 	constructor(props) {
 		super(props);
+		this.state = store.getState();
+	}
 
-		let dims = 4;
-		this.state = {
-			width: dims,
-			height: dims,
-			grid: makeGrid(dims, dims)
-		};
+	componentDidMount() {
+		this.unsubscribe = store.subscribe(this.onStateChange.bind(this));
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+
+	onStateChange() {
+		this.setState(store.getState());
 	}
 
 	onRotate(index, degs) {
-		this.setState({
-			grid: {...this.state.grid, ...{[index]: {...this.state.grid[index], rotation: degs}}}
-		});
+		store.dispatch({type: "ROTATE_GRID_PIECE", index: index, degs: degs});
 	}
 
 	renderGrid() {
 		return Object.keys(this.state.grid).map((k, i) => (
 			<Hexagon
+				gridPiece={this.state.grid[k]}
 				key={i}
 				onRotate={this.onRotate.bind(this, k)}
 				position={[this.state.grid[k].x * 225, (this.state.grid[k].y * 260) + ((this.state.grid[k].x % 2) * 130) ]}
