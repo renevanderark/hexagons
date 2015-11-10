@@ -20720,7 +20720,7 @@ var makeGrid = function makeGrid(w, h) {
 	var grid = {};
 	for (var x = 0, i = 0; x < w; x++) {
 		for (var y = 0; y < h; y++, i++) {
-			grid[i] = { x: x, y: y, rotation: 0, tubes: randomTubes() };
+			grid[i] = { x: x, y: y, rotation: 360, tubes: randomTubes() };
 		}
 	}
 	return grid;
@@ -20761,8 +20761,10 @@ var neighboursFor = function neighboursFor(p, grid) {
 
 // Find the tube of gridpiece p at a given edge index idx
 var findTube = function findTube(p, idx) {
-	return p.tubes.filter(function (t) {
-		return t.from === idx || t.to === idx;
+	return p.tubes.map(function (t, i) {
+		return [i, t];
+	}).filter(function (t) {
+		return t[1].from === idx || t[1].to === idx;
 	})[0];
 };
 
@@ -20775,6 +20777,18 @@ var getConnections = function getConnections(p, grid) {
 	}).filter(function (c) {
 		return c[0].tube && c[1].tube;
 	});
+};
+
+var getNeighbourDims = function getNeighbourDims(p, outlet) {
+	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
+		return [ar[0] + p.x, ar[1] + p.y];
+	})[outlet];
+};
+
+var getGridPieceAt = function getGridPieceAt(d, grid) {
+	return Object.keys(grid).filter(function (k) {
+		return grid[k].x === d[0] && grid[k].y === d[1];
+	})[0] || null;
 };
 
 //const findConnectingTube = (p, entryPoint, grid) =>
@@ -20791,10 +20805,22 @@ var detectFlow = function detectFlow(grid) {
 	var abscon = absConnector(absRotation(grid[current].rotation));
 	var itsTube = findTube(grid[current], abscon);
 	if (itsTube) {
-		itsTube.hasFlow = 1;
-		console.log(itsTube.from, itsTube.to);
-		console.log(absConnector(itsTube.from - abscon), absConnector(itsTube.to - abscon));
-		console.log(normConn(absConnector(itsTube.from - abscon)), normConn(absConnector(itsTube.to - abscon)));
+		grid[current].tubes[itsTube[0]].hasFlow = 1;
+		var outlet = normConn(absConnector((abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from) - abscon));
+		var entryPoint = connectsAt(outlet);
+		var connectingNeighbour = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+
+		console.log("outlet: " + outlet, "entryPoint: " + entryPoint);
+		console.log("neighbour at outlet: " + connectingNeighbour, grid[connectingNeighbour]);
+		if (connectingNeighbour) {
+			console.log(absConnector(absRotation(grid[connectingNeighbour].rotation)));
+			console.log(absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
+			var neighbourTube = findTube(grid[connectingNeighbour], absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
+			console.log(neighbourTube);
+			if (neighbourTube) {
+				grid[connectingNeighbour].tubes[neighbourTube[0]].hasFlow = 1;
+			}
+		}
 	}
 	return grid;
 };
