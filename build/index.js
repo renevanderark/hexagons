@@ -20745,10 +20745,20 @@ var neighboursFor = function neighboursFor(p, grid) {
 	});
 };
 
+var findTube = function findTube(p, idx) {
+	return p.tubes.filter(function (t) {
+		return t.from === idx || t.to === idx;
+	})[0];
+};
+
 var getConnections = function getConnections(p, grid) {
 	console.log("1: ", neighboursFor(p, grid));
 	console.log("2: ", neighboursFor(p, grid).map(function (n) {
 		return [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))];
+	}).map(function (n) {
+		return _defineProperty({
+			me: findTube(p, n[0])
+		}, n[1], findTube(grid[n[1]], n[2]));
 	}));
 };
 

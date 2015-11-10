@@ -38,9 +38,20 @@ const neighboursFor = (p, grid) =>
 			connectsAt(d[2])
 		]).filter((k) => k[1] !== null);
 
+const findTube = (p, idx) =>
+	p.tubes.filter((t) => (t.from === idx || t.to === idx))[0];
+
 const getConnections = (p, grid) => {
 	console.log("1: ", neighboursFor(p, grid));
-	console.log("2: ", neighboursFor(p, grid).map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))]));
+	console.log("2: ", neighboursFor(p, grid)
+		.map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))])
+		.map((n) => {
+			return {
+				me: findTube(p, n[0]),
+				[n[1]]: findTube(grid[n[1]], n[2])
+			};
+		})
+	);
 };
 
 let initialState = {
