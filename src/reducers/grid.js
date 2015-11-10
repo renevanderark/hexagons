@@ -8,7 +8,7 @@ const randomTubes = () => {
 		taken.push(fr);
 		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) { }
 		taken.push(to);
-		tubes.push({from: fr, to: to});
+		tubes.push({from: fr, to: to, hasFlow: 0});
 	}
 
 	return tubes;
@@ -31,6 +31,8 @@ const absRotation = (degs) => 6 - ((degs < 0 ? 360 + degs : degs) / 60);
 // Convert rotated index of given edge back to real index
 // @param absRot = output of absRotation + actual edge index OR output of connectsAt
 const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
+
+const normConn = (abscon) => abscon < 0 ? 6 + abscon : abscon;
 
 // Returns the corresponding edge of a neighbour to given edge index
 const connectsAt = (num) => absConnector(num + 3);
@@ -56,10 +58,31 @@ const getConnections = (p, grid) =>
 		.map((n) => [{tube: findTube(p, n[0])}, {tube: findTube(grid[n[1]], n[2]), key: n[1]}])
 		.filter((c) => c[0].tube && c[1].tube);
 
+//const findConnectingTube = (p, entryPoint, grid) =>
+//	getConnections(p, grid).filter((c) => c[1].tube.from === tub )
+
+
+const detectFlow = (grid) => {
+	for(let k in grid) {
+		grid[k].tubes = grid[k].tubes.map((t) => {return {from: t.from, to: t.to, hasFlow: 0}; });
+	}
+
+	let current = "0";
+	let abscon = absConnector(absRotation(grid[current].rotation));
+	let itsTube = findTube(grid[current], abscon);
+	if(itsTube) {
+		itsTube.hasFlow = 1;
+		console.log(itsTube.from, itsTube.to);
+		console.log(absConnector(itsTube.from - abscon), absConnector(itsTube.to - abscon));
+		console.log(normConn(absConnector(itsTube.from - abscon)), normConn(absConnector(itsTube.to - abscon)));
+	}
+	return grid;
+};
+
 let initialState = {
 	width: 4,
 	height: 4,
-	grid: makeGrid(4, 4)
+	grid: detectFlow(makeGrid(4, 4))
 };
 
 export default function(state = initialState, action) {
@@ -69,7 +92,7 @@ export default function(state = initialState, action) {
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
 			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
-			console.log(getConnections(gridPiece, newState.grid));
+			newState.grid = detectFlow(newState.grid);
 			return newState;
 		default:
 			return state;

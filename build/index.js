@@ -20556,6 +20556,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var dims = [[37.5, 65], [150, 0], [262.5, 65], [262.5, 195], [150, 260], [37.5, 195]];
 
+var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)"];
+
 var Tube = (function (_React$Component) {
 	_inherits(Tube, _React$Component);
 
@@ -20576,7 +20578,7 @@ var Tube = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			return _react2["default"].createElement("path", { d: this.makePoints(), fill: "transparent", stroke: "rgba(0,0,0,.3)", strokeWidth: "20" });
+			return _react2["default"].createElement("path", { d: this.makePoints(), fill: "transparent", stroke: strokes[this.props.hasFlow], strokeWidth: "20" });
 		}
 	}]);
 
@@ -20585,6 +20587,7 @@ var Tube = (function (_React$Component) {
 
 Tube.propTypes = {
 	from: _react2["default"].PropTypes.number,
+	hasFlow: _react2["default"].PropTypes.number,
 	to: _react2["default"].PropTypes.number
 };
 
@@ -20707,7 +20710,7 @@ var randomTubes = function randomTubes() {
 		taken.push(fr);
 		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) {}
 		taken.push(to);
-		tubes.push({ from: fr, to: to });
+		tubes.push({ from: fr, to: to, hasFlow: 0 });
 	}
 
 	return tubes;
@@ -20732,6 +20735,10 @@ var absRotation = function absRotation(degs) {
 // @param absRot = output of absRotation + actual edge index OR output of connectsAt
 var absConnector = function absConnector(absRot) {
 	return absRot > 5 ? absRot - 6 : absRot;
+};
+
+var normConn = function normConn(abscon) {
+	return abscon < 0 ? 6 + abscon : abscon;
 };
 
 // Returns the corresponding edge of a neighbour to given edge index
@@ -20770,10 +20777,32 @@ var getConnections = function getConnections(p, grid) {
 	});
 };
 
+//const findConnectingTube = (p, entryPoint, grid) =>
+//	getConnections(p, grid).filter((c) => c[1].tube.from === tub )
+
+var detectFlow = function detectFlow(grid) {
+	for (var k in grid) {
+		grid[k].tubes = grid[k].tubes.map(function (t) {
+			return { from: t.from, to: t.to, hasFlow: 0 };
+		});
+	}
+
+	var current = "0";
+	var abscon = absConnector(absRotation(grid[current].rotation));
+	var itsTube = findTube(grid[current], abscon);
+	if (itsTube) {
+		itsTube.hasFlow = 1;
+		console.log(itsTube.from, itsTube.to);
+		console.log(absConnector(itsTube.from - abscon), absConnector(itsTube.to - abscon));
+		console.log(normConn(absConnector(itsTube.from - abscon)), normConn(absConnector(itsTube.to - abscon)));
+	}
+	return grid;
+};
+
 var initialState = {
 	width: 4,
 	height: 4,
-	grid: makeGrid(4, 4)
+	grid: detectFlow(makeGrid(4, 4))
 };
 
 exports["default"] = function (state, action) {
@@ -20785,7 +20814,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
-			console.log(getConnections(gridPiece, newState.grid));
+			newState.grid = detectFlow(newState.grid);
 			return newState;
 		default:
 			return state;

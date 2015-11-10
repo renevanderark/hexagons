@@ -9,6 +9,11 @@ const dims = [
 	[37.5, 195]
 ];
 
+const strokes = [
+	"rgba(0,0,0,.3)",
+	"rgba(0,0,255,.6)"
+];
+
 class Tube extends React.Component {
 
 	makePoints() {
@@ -20,13 +25,14 @@ class Tube extends React.Component {
 
 	render() {
 		return (
-			<path d={this.makePoints()} fill="transparent" stroke="rgba(0,0,0,.3)" strokeWidth="20" />
+			<path d={this.makePoints()} fill="transparent" stroke={strokes[this.props.hasFlow]} strokeWidth="20" />
 		);
 	}
 }
 
 Tube.propTypes = {
 	from: React.PropTypes.number,
+	hasFlow: React.PropTypes.number,
 	to: React.PropTypes.number
 };
 
