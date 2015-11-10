@@ -103,7 +103,8 @@ const detectFlow = (grid) => {
 let initialState = {
 	width: 4,
 	height: 4,
-	grid: detectFlow(makeGrid(4, 4))
+	grid: detectFlow(makeGrid(4, 4)),
+	updated: 0
 };
 
 export default function(state = initialState, action) {
@@ -112,7 +113,7 @@ export default function(state = initialState, action) {
 		case "ROTATE_GRID_PIECE":
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
-			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
+			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}, updated: new Date().getTime()};
 			newState.grid = detectFlow(newState.grid);
 			return newState;
 		default:

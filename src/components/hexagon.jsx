@@ -55,7 +55,7 @@ class Hexagon extends React.Component {
 	}
 
 	shouldComponentUpdate(nextProps) {
-		return this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
+		return this.props.updated !== nextProps.updated || this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
 	}
 
 	componentWillUnmount() {

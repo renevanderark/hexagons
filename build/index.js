@@ -20449,7 +20449,7 @@ var Hexagon = (function (_React$Component) {
 	}, {
 		key: "shouldComponentUpdate",
 		value: function shouldComponentUpdate(nextProps) {
-			return this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
+			return this.props.updated !== nextProps.updated || this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
 		}
 	}, {
 		key: "componentWillUnmount",
@@ -20661,7 +20661,8 @@ var App = (function (_React$Component) {
 					},
 					position: [_this.state.grid[k].x * 225, _this.state.grid[k].y * 260 + _this.state.grid[k].x % 2 * 130],
 					rotation: _this.state.grid[k].rotation,
-					tubes: _this.state.grid[k].tubes });
+					tubes: _this.state.grid[k].tubes,
+					updated: _this.state.updated });
 			});
 		}
 	}, {
@@ -20828,7 +20829,8 @@ var detectFlow = function detectFlow(grid) {
 var initialState = {
 	width: 4,
 	height: 4,
-	grid: detectFlow(makeGrid(4, 4))
+	grid: detectFlow(makeGrid(4, 4)),
+	updated: 0
 };
 
 exports["default"] = function (state, action) {
@@ -20839,7 +20841,7 @@ exports["default"] = function (state, action) {
 		case "ROTATE_GRID_PIECE":
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
-			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
+			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
 			newState.grid = detectFlow(newState.grid);
 			return newState;
 		default:
