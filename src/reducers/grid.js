@@ -40,7 +40,7 @@ const neighboursFor = (p, grid) =>
 
 const getConnections = (p, grid) => {
 	console.log("1: ", neighboursFor(p, grid));
-	console.log("2: ", neighboursFor(p, grid).map((n) => [n[0], n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))]));
+	console.log("2: ", neighboursFor(p, grid).map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))]));
 };
 
 let initialState = {
