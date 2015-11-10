@@ -20723,16 +20723,23 @@ var makeGrid = function makeGrid(w, h) {
 	return grid;
 };
 
+// Convert rotation to current index of top left edge
 var absRotation = function absRotation(degs) {
 	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
 };
+
+// Convert rotated index of given edge back to real index
+// @param absRot = output of absRotation + actual edge index OR output of connectsAt
 var absConnector = function absConnector(absRot) {
 	return absRot > 5 ? absRot - 6 : absRot;
 };
+
+// Returns the corresponding edge of a neighbour to given edge index
 var connectsAt = function connectsAt(num) {
 	return absConnector(num + 3);
 };
 
+// Detect the neighbours for gridpiece p
 var neighboursFor = function neighboursFor(p, grid) {
 	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar, i) {
 		return [ar[0] + p.x, ar[1] + p.y, i];
@@ -20745,12 +20752,14 @@ var neighboursFor = function neighboursFor(p, grid) {
 	});
 };
 
+// Find the tube of gridpiece p at a given edge index idx
 var findTube = function findTube(p, idx) {
 	return p.tubes.filter(function (t) {
 		return t.from === idx || t.to === idx;
 	})[0];
 };
 
+// Get the connecting tubes for gridpiece p from the neighbours of gridpiece p
 var getConnections = function getConnections(p, grid) {
 	return neighboursFor(p, grid).map(function (n) {
 		return [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))];

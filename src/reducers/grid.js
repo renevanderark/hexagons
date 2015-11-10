@@ -25,10 +25,17 @@ const makeGrid = (w, h) => {
 	return grid;
 };
 
+// Convert rotation to current index of top left edge
 const absRotation = (degs) => 6 - ((degs < 0 ? 360 + degs : degs) / 60);
+
+// Convert rotated index of given edge back to real index
+// @param absRot = output of absRotation + actual edge index OR output of connectsAt
 const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
+
+// Returns the corresponding edge of a neighbour to given edge index
 const connectsAt = (num) => absConnector(num + 3);
 
+// Detect the neighbours for gridpiece p
 const neighboursFor = (p, grid) =>
 	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
 		.map((ar, i) => [ar[0] + p.x, ar[1] + p.y, i])
@@ -38,9 +45,11 @@ const neighboursFor = (p, grid) =>
 			connectsAt(d[2])
 		]).filter((k) => k[1] !== null);
 
+// Find the tube of gridpiece p at a given edge index idx
 const findTube = (p, idx) =>
 	p.tubes.filter((t) => (t.from === idx || t.to === idx))[0];
 
+// Get the connecting tubes for gridpiece p from the neighbours of gridpiece p
 const getConnections = (p, grid) =>
 	neighboursFor(p, grid)
 		.map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))])
