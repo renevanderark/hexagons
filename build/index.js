@@ -20752,14 +20752,13 @@ var findTube = function findTube(p, idx) {
 };
 
 var getConnections = function getConnections(p, grid) {
-	console.log("1: ", neighboursFor(p, grid));
-	console.log("2: ", neighboursFor(p, grid).map(function (n) {
+	return neighboursFor(p, grid).map(function (n) {
 		return [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))];
 	}).map(function (n) {
-		return _defineProperty({
-			me: findTube(p, n[0])
-		}, n[1], findTube(grid[n[1]], n[2]));
-	}));
+		return [{ tube: findTube(p, n[0]) }, { tube: findTube(grid[n[1]], n[2]), key: n[1] }];
+	}).filter(function (c) {
+		return c[0].tube && c[1].tube;
+	});
 };
 
 var initialState = {
@@ -20777,7 +20776,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
-			getConnections(gridPiece, newState.grid);
+			console.log(getConnections(gridPiece, newState.grid));
 			return newState;
 		default:
 			return state;

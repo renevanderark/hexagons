@@ -41,18 +41,11 @@ const neighboursFor = (p, grid) =>
 const findTube = (p, idx) =>
 	p.tubes.filter((t) => (t.from === idx || t.to === idx))[0];
 
-const getConnections = (p, grid) => {
-	console.log("1: ", neighboursFor(p, grid));
-	console.log("2: ", neighboursFor(p, grid)
+const getConnections = (p, grid) =>
+	neighboursFor(p, grid)
 		.map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))])
-		.map((n) => {
-			return {
-				me: findTube(p, n[0]),
-				[n[1]]: findTube(grid[n[1]], n[2])
-			};
-		})
-	);
-};
+		.map((n) => [{tube: findTube(p, n[0])}, {tube: findTube(grid[n[1]], n[2]), key: n[1]}])
+		.filter((c) => c[0].tube && c[1].tube);
 
 let initialState = {
 	width: 4,
@@ -67,7 +60,7 @@ export default function(state = initialState, action) {
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
 			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
-			getConnections(gridPiece, newState.grid);
+			console.log(getConnections(gridPiece, newState.grid));
 			return newState;
 		default:
 			return state;
