@@ -29,7 +29,6 @@ const makeGrid = (w, h) => {
 const absRotation = (degs) => 6 - ((degs < 0 ? 360 + degs : degs) / 60);
 
 // Convert rotated index of given edge back to real index
-// @param absRot = output of absRotation + actual edge index OR output of connectsAt
 const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
 
 const normConn = (abscon) => abscon < 0 ? 6 + abscon : abscon;
@@ -37,28 +36,11 @@ const normConn = (abscon) => abscon < 0 ? 6 + abscon : abscon;
 // Returns the corresponding edge of a neighbour to given edge index
 const connectsAt = (num) => absConnector(num + 3);
 
-// Detect the neighbours for gridpiece p
-const neighboursFor = (p, grid) =>
-	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
-		.map((ar, i) => [ar[0] + p.x, ar[1] + p.y, i])
-		.map((d) => [
-			d[2],
-			Object.keys(grid).filter((k) => grid[k].x === d[0] && grid[k].y === d[1])[0] || null,
-			connectsAt(d[2])
-		]).filter((k) => k[1] !== null);
-
 // Find the tube of gridpiece p at a given edge index idx
 const findTube = (p, idx) =>
 	p.tubes
 		.map((t, i) => [i, t])
 		.filter((t) => (t[1].from === idx || t[1].to === idx))[0];
-
-// Get the connecting tubes for gridpiece p from the neighbours of gridpiece p
-const getConnections = (p, grid) =>
-	neighboursFor(p, grid)
-		.map((n) => [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))])
-		.map((n) => [{tube: findTube(p, n[0])}, {tube: findTube(grid[n[1]], n[2]), key: n[1]}])
-		.filter((c) => c[0].tube && c[1].tube);
 
 const getNeighbourDims = (p, outlet) =>
 	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
@@ -68,32 +50,26 @@ const getGridPieceAt = (d, grid) =>
 	Object.keys(grid).filter((k) => grid[k].x === d[0] && grid[k].y === d[1])[0] || null;
 
 
-//const findConnectingTube = (p, entryPoint, grid) =>
-//	getConnections(p, grid).filter((c) => c[1].tube.from === tub )
-
-const detectFlow = (grid) => {
+const detectFlow = (grid, numFlows) => {
 	for(let k in grid) {
 		grid[k].tubes = grid[k].tubes.map((t) => {return {from: t.from, to: t.to, hasFlow: 0}; });
 	}
 
-	let current = "0";
-	let abscon = absConnector(absRotation(grid[current].rotation));
-	let itsTube = findTube(grid[current], abscon);
-	if(itsTube) {
-		grid[current].tubes[itsTube[0]].hasFlow = 1;
-		let outlet = normConn(absConnector((abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from) - abscon));
-		let entryPoint = connectsAt(outlet);
-		let connectingNeighbour = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+	for(let flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
+		let current = "" + (flowIdx - 1);
+		let entryPoint = 0;
+		while(current) {
+			let abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
+			let itsTube = findTube(grid[current], abscon);
 
-		console.log("outlet: " + outlet, "entryPoint: " + entryPoint);
-		console.log("neighbour at outlet: " + connectingNeighbour, grid[connectingNeighbour]);
-		if(connectingNeighbour) {
-			console.log(absConnector(absRotation(grid[connectingNeighbour].rotation)));
-			console.log(absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
-			let neighbourTube = findTube(grid[connectingNeighbour], absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
-			console.log(neighbourTube);
-			if(neighbourTube) {
-				grid[connectingNeighbour].tubes[neighbourTube[0]].hasFlow = 1;
+			if(itsTube) {
+				grid[current].tubes[itsTube[0]].hasFlow = flowIdx;
+				let outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
+				outlet = normConn(outlet - absRotation(grid[current].rotation));
+				entryPoint = connectsAt(outlet);
+				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+			} else {
+				current = null;
 			}
 		}
 	}
@@ -101,9 +77,10 @@ const detectFlow = (grid) => {
 };
 
 let initialState = {
-	width: 4,
-	height: 4,
-	grid: detectFlow(makeGrid(4, 4)),
+	width: 10,
+	height: 10,
+	numFlows: 3,
+	grid: detectFlow(makeGrid(10, 10), 3),
 	updated: 0
 };
 
@@ -114,7 +91,7 @@ export default function(state = initialState, action) {
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
 			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}, updated: new Date().getTime()};
-			newState.grid = detectFlow(newState.grid);
+			newState.grid = detectFlow(newState.grid, state.numFlows);
 			return newState;
 		default:
 			return state;

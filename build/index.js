@@ -20556,7 +20556,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var dims = [[37.5, 65], [150, 0], [262.5, 65], [262.5, 195], [150, 260], [37.5, 195]];
 
-var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)"];
+var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)"];
 
 var Tube = (function (_React$Component) {
 	_inherits(Tube, _React$Component);
@@ -20733,7 +20733,6 @@ var absRotation = function absRotation(degs) {
 };
 
 // Convert rotated index of given edge back to real index
-// @param absRot = output of absRotation + actual edge index OR output of connectsAt
 var absConnector = function absConnector(absRot) {
 	return absRot > 5 ? absRot - 6 : absRot;
 };
@@ -20747,19 +20746,6 @@ var connectsAt = function connectsAt(num) {
 	return absConnector(num + 3);
 };
 
-// Detect the neighbours for gridpiece p
-var neighboursFor = function neighboursFor(p, grid) {
-	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar, i) {
-		return [ar[0] + p.x, ar[1] + p.y, i];
-	}).map(function (d) {
-		return [d[2], Object.keys(grid).filter(function (k) {
-			return grid[k].x === d[0] && grid[k].y === d[1];
-		})[0] || null, connectsAt(d[2])];
-	}).filter(function (k) {
-		return k[1] !== null;
-	});
-};
-
 // Find the tube of gridpiece p at a given edge index idx
 var findTube = function findTube(p, idx) {
 	return p.tubes.map(function (t, i) {
@@ -20767,17 +20753,6 @@ var findTube = function findTube(p, idx) {
 	}).filter(function (t) {
 		return t[1].from === idx || t[1].to === idx;
 	})[0];
-};
-
-// Get the connecting tubes for gridpiece p from the neighbours of gridpiece p
-var getConnections = function getConnections(p, grid) {
-	return neighboursFor(p, grid).map(function (n) {
-		return [absConnector(n[0] + absRotation(p.rotation)), n[1], absConnector(n[2] + absRotation(grid[n[1]].rotation))];
-	}).map(function (n) {
-		return [{ tube: findTube(p, n[0]) }, { tube: findTube(grid[n[1]], n[2]), key: n[1] }];
-	}).filter(function (c) {
-		return c[0].tube && c[1].tube;
-	});
 };
 
 var getNeighbourDims = function getNeighbourDims(p, outlet) {
@@ -20792,34 +20767,28 @@ var getGridPieceAt = function getGridPieceAt(d, grid) {
 	})[0] || null;
 };
 
-//const findConnectingTube = (p, entryPoint, grid) =>
-//	getConnections(p, grid).filter((c) => c[1].tube.from === tub )
-
-var detectFlow = function detectFlow(grid) {
+var detectFlow = function detectFlow(grid, numFlows) {
 	for (var k in grid) {
 		grid[k].tubes = grid[k].tubes.map(function (t) {
 			return { from: t.from, to: t.to, hasFlow: 0 };
 		});
 	}
 
-	var current = "0";
-	var abscon = absConnector(absRotation(grid[current].rotation));
-	var itsTube = findTube(grid[current], abscon);
-	if (itsTube) {
-		grid[current].tubes[itsTube[0]].hasFlow = 1;
-		var outlet = normConn(absConnector((abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from) - abscon));
-		var entryPoint = connectsAt(outlet);
-		var connectingNeighbour = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
+		var current = "" + (flowIdx - 1);
+		var entryPoint = 0;
+		while (current) {
+			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
+			var itsTube = findTube(grid[current], abscon);
 
-		console.log("outlet: " + outlet, "entryPoint: " + entryPoint);
-		console.log("neighbour at outlet: " + connectingNeighbour, grid[connectingNeighbour]);
-		if (connectingNeighbour) {
-			console.log(absConnector(absRotation(grid[connectingNeighbour].rotation)));
-			console.log(absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
-			var neighbourTube = findTube(grid[connectingNeighbour], absConnector(entryPoint + absConnector(absRotation(grid[connectingNeighbour].rotation))));
-			console.log(neighbourTube);
-			if (neighbourTube) {
-				grid[connectingNeighbour].tubes[neighbourTube[0]].hasFlow = 1;
+			if (itsTube) {
+				grid[current].tubes[itsTube[0]].hasFlow = flowIdx;
+				var outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
+				outlet = normConn(outlet - absRotation(grid[current].rotation));
+				entryPoint = connectsAt(outlet);
+				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+			} else {
+				current = null;
 			}
 		}
 	}
@@ -20827,9 +20796,10 @@ var detectFlow = function detectFlow(grid) {
 };
 
 var initialState = {
-	width: 4,
-	height: 4,
-	grid: detectFlow(makeGrid(4, 4)),
+	width: 10,
+	height: 10,
+	numFlows: 3,
+	grid: detectFlow(makeGrid(10, 10), 3),
 	updated: 0
 };
 
@@ -20842,7 +20812,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
-			newState.grid = detectFlow(newState.grid);
+			newState.grid = detectFlow(newState.grid, state.numFlows);
 			return newState;
 		default:
 			return state;
