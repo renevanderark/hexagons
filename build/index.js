@@ -20701,13 +20701,13 @@ var randomTubes = function randomTubes() {
 	var taken = [];
 	var tubes = [];
 	for (var i = 0; i < amount; i++) {
-		var from = undefined,
+		var fr = undefined,
 		    to = undefined;
-		while (taken.indexOf(from = Math.floor(Math.random() * 6)) > -1) {}
-		taken.push(from);
+		while (taken.indexOf(fr = Math.floor(Math.random() * 6)) > -1) {}
+		taken.push(fr);
 		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) {}
 		taken.push(to);
-		tubes.push({ from: from, to: to });
+		tubes.push({ from: fr, to: to });
 	}
 
 	return tubes;
