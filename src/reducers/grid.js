@@ -1,20 +1,3 @@
-const randomTubes = () => {
-	let amount = Math.floor(Math.random() * 3) + 1;
-	let taken = [];
-	let tubes = [];
-	for(let i = 0; i < amount; i++) {
-		let fr, to;
-		while (taken.indexOf(fr = Math.floor(Math.random() * 6)) > -1) { }
-		taken.push(fr);
-		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) { }
-		taken.push(to);
-		tubes.push({from: fr, to: to, hasFlow: 0});
-	}
-
-	return tubes;
-};
-
-
 const getNeighbourDims = (p, outlet) =>
 	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
 	.map((ar) => [ar[0] + p.x, ar[1] + p.y])[outlet];
@@ -52,21 +35,24 @@ const makeTube = (entryPoint, p, grid) => {
 };
 
 const addTubes = (grid, start) => {
-	let entryPoint = 0;
+	let entryPoint = 1;
+	let length = 0;
 	let current = "" + start;
-
+	let newTube, last;
 	while(current) {
-		let newTube = makeTube(entryPoint, grid[current], grid);
+		length++;
+		newTube = makeTube(entryPoint, grid[current], grid);
 		if(newTube) {
 			grid[current].tubes.push(newTube);
 			entryPoint = connectsAt(newTube.to);
+			last = current;
 			current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
 		} else {
 			throw new Error("complete failure");
 		}
 	}
 
-	return grid;
+	return [last, newTube.to, length];
 };
 
 
@@ -77,8 +63,9 @@ const makeGrid = (w, h, numFlows = 1) => {
 			grid[i] = {x: x, y: y, rotation: 360, tubes: []};
 		}
 	}
+
 	for(let i = 0; i < numFlows; i++) {
-		grid = addTubes(grid, i);
+		console.log(i, addTubes(grid, i * h));
 	}
 	return grid;
 };
@@ -95,14 +82,14 @@ const findTube = (p, idx) =>
 		.map((t, i) => [i, t])
 		.filter((t) => (t[1].from === idx || t[1].to === idx))[0];
 
-const detectFlow = (grid, numFlows) => {
+const detectFlow = (grid, numFlows, h) => {
 	for(let k in grid) {
 		grid[k].tubes = grid[k].tubes.map((t) => {return {from: t.from, to: t.to, hasFlow: 0}; });
 	}
 
 	for(let flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		let current = "" + (flowIdx - 1);
-		let entryPoint = 0;
+		let current = "" + ((flowIdx-1) * h);
+		let entryPoint = 1;
 		while(current) {
 			let abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
 			let itsTube = findTube(grid[current], abscon);
@@ -121,11 +108,15 @@ const detectFlow = (grid, numFlows) => {
 	return grid;
 };
 
+const H = 3;
+const W = 3;
+const F = 2;
+
 let initialState = {
-	width: 5,
-	height: 5,
-	numFlows: 3,
-	grid: detectFlow(makeGrid(5, 5, 3), 3),
+	width: W,
+	height: H,
+	numFlows: F,
+	grid: detectFlow(makeGrid(W, H, F), F, H),
 	updated: 0
 };
 
@@ -136,7 +127,7 @@ export default function(state = initialState, action) {
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
 			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}, updated: new Date().getTime()};
-			newState.grid = detectFlow(newState.grid, state.numFlows);
+			newState.grid = detectFlow(newState.grid, state.numFlows, state.height);
 			return newState;
 		default:
 			return state;

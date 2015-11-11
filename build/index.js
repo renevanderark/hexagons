@@ -20700,23 +20700,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var randomTubes = function randomTubes() {
-	var amount = Math.floor(Math.random() * 3) + 1;
-	var taken = [];
-	var tubes = [];
-	for (var i = 0; i < amount; i++) {
-		var fr = undefined,
-		    to = undefined;
-		while (taken.indexOf(fr = Math.floor(Math.random() * 6)) > -1) {}
-		taken.push(fr);
-		while (taken.indexOf(to = Math.floor(Math.random() * 6)) > -1) {}
-		taken.push(to);
-		tubes.push({ from: fr, to: to, hasFlow: 0 });
-	}
-
-	return tubes;
-};
-
 var getNeighbourDims = function getNeighbourDims(p, outlet) {
 	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
 		return [ar[0] + p.x, ar[1] + p.y];
@@ -20767,21 +20750,25 @@ var makeTube = function makeTube(entryPoint, p, grid) {
 };
 
 var addTubes = function addTubes(grid, start) {
-	var entryPoint = 0;
+	var entryPoint = 1;
+	var length = 0;
 	var current = "" + start;
-
+	var newTube = undefined,
+	    last = undefined;
 	while (current) {
-		var newTube = makeTube(entryPoint, grid[current], grid);
+		length++;
+		newTube = makeTube(entryPoint, grid[current], grid);
 		if (newTube) {
 			grid[current].tubes.push(newTube);
 			entryPoint = connectsAt(newTube.to);
+			last = current;
 			current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
 		} else {
 			throw new Error("complete failure");
 		}
 	}
 
-	return grid;
+	return [last, newTube.to, length];
 };
 
 var makeGrid = function makeGrid(w, h) {
@@ -20793,8 +20780,9 @@ var makeGrid = function makeGrid(w, h) {
 			grid[i] = { x: x, y: y, rotation: 360, tubes: [] };
 		}
 	}
+
 	for (var i = 0; i < numFlows; i++) {
-		grid = addTubes(grid, i);
+		console.log(i, addTubes(grid, i * h));
 	}
 	return grid;
 };
@@ -20817,7 +20805,7 @@ var findTube = function findTube(p, idx) {
 	})[0];
 };
 
-var detectFlow = function detectFlow(grid, numFlows) {
+var detectFlow = function detectFlow(grid, numFlows, h) {
 	for (var k in grid) {
 		grid[k].tubes = grid[k].tubes.map(function (t) {
 			return { from: t.from, to: t.to, hasFlow: 0 };
@@ -20825,8 +20813,8 @@ var detectFlow = function detectFlow(grid, numFlows) {
 	}
 
 	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		var current = "" + (flowIdx - 1);
-		var entryPoint = 0;
+		var current = "" + (flowIdx - 1) * h;
+		var entryPoint = 1;
 		while (current) {
 			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
 			var itsTube = findTube(grid[current], abscon);
@@ -20845,11 +20833,15 @@ var detectFlow = function detectFlow(grid, numFlows) {
 	return grid;
 };
 
+var H = 3;
+var W = 3;
+var F = 2;
+
 var initialState = {
-	width: 5,
-	height: 5,
-	numFlows: 3,
-	grid: detectFlow(makeGrid(5, 5, 3), 3),
+	width: W,
+	height: H,
+	numFlows: F,
+	grid: detectFlow(makeGrid(W, H, F), F, H),
 	updated: 0
 };
 
@@ -20862,7 +20854,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
-			newState.grid = detectFlow(newState.grid, state.numFlows);
+			newState.grid = detectFlow(newState.grid, state.numFlows, state.height);
 			return newState;
 		default:
 			return state;
