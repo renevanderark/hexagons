@@ -20717,44 +20717,6 @@ var randomTubes = function randomTubes() {
 	return tubes;
 };
 
-var makeGrid = function makeGrid(w, h) {
-	var grid = {};
-	for (var x = 0, i = 0; x < w; x++) {
-		for (var y = 0; y < h; y++, i++) {
-			grid[i] = { x: x, y: y, rotation: 360, tubes: randomTubes() };
-		}
-	}
-	return grid;
-};
-
-// Convert rotation to current index of top left edge
-var absRotation = function absRotation(degs) {
-	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
-};
-
-// Convert rotated index of given edge back to real index
-var absConnector = function absConnector(absRot) {
-	return absRot > 5 ? absRot - 6 : absRot;
-};
-
-var normConn = function normConn(abscon) {
-	return abscon < 0 ? 6 + abscon : abscon;
-};
-
-// Returns the corresponding edge of a neighbour to given edge index
-var connectsAt = function connectsAt(num) {
-	return absConnector(num + 3);
-};
-
-// Find the tube of gridpiece p at a given edge index idx
-var findTube = function findTube(p, idx) {
-	return p.tubes.map(function (t, i) {
-		return [i, t];
-	}).filter(function (t) {
-		return t[1].from === idx || t[1].to === idx;
-	})[0];
-};
-
 var getNeighbourDims = function getNeighbourDims(p, outlet) {
 	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
 		return [ar[0] + p.x, ar[1] + p.y];
@@ -20765,6 +20727,94 @@ var getGridPieceAt = function getGridPieceAt(d, grid) {
 	return Object.keys(grid).filter(function (k) {
 		return grid[k].x === d[0] && grid[k].y === d[1];
 	})[0] || null;
+};
+
+// Convert rotated index of given edge back to real index
+var absConnector = function absConnector(absRot) {
+	return absRot > 5 ? absRot - 6 : absRot;
+};
+
+// Returns the corresponding edge of a neighbour to given edge index
+var connectsAt = function connectsAt(num) {
+	return absConnector(num + 3);
+};
+
+var makeTube = function makeTube(entryPoint, p, grid) {
+	var available = [0, 1, 2, 3, 4, 5].filter(function (idx) {
+		return idx !== entryPoint;
+	}).filter(function (idx) {
+		return p.tubes.filter(function (t) {
+			return t.from === idx || t.to === idx;
+		}).length === 0;
+	});
+
+	var connectors = available.filter(function (idx) {
+		return getGridPieceAt(getNeighbourDims(p, idx), grid);
+	});
+
+	var exits = available.filter(function (idx) {
+		return !getGridPieceAt(getNeighbourDims(p, idx), grid);
+	});
+
+	if (connectors.length === 0 && exits.length === 0) {
+		return false;
+	}
+	return {
+		from: entryPoint,
+		to: connectors.length ? connectors[Math.floor(Math.random() * connectors.length)] : exits[Math.floor(Math.random() * exits.length)],
+		hasFlow: 0
+	};
+};
+
+var addTubes = function addTubes(grid, start) {
+	var entryPoint = 0;
+	var current = "" + start;
+
+	while (current) {
+		var newTube = makeTube(entryPoint, grid[current], grid);
+		if (newTube) {
+			grid[current].tubes.push(newTube);
+			entryPoint = connectsAt(newTube.to);
+			current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
+		} else {
+			throw new Error("complete failure");
+		}
+	}
+
+	return grid;
+};
+
+var makeGrid = function makeGrid(w, h) {
+	var numFlows = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+
+	var grid = {};
+	for (var x = 0, i = 0; x < w; x++) {
+		for (var y = 0; y < h; y++, i++) {
+			grid[i] = { x: x, y: y, rotation: 360, tubes: [] };
+		}
+	}
+	for (var i = 0; i < numFlows; i++) {
+		grid = addTubes(grid, i);
+	}
+	return grid;
+};
+
+// Convert rotation to current index of top left edge
+var absRotation = function absRotation(degs) {
+	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
+};
+
+var normConn = function normConn(abscon) {
+	return abscon < 0 ? 6 + abscon : abscon;
+};
+
+// Find the tube of gridpiece p at a given edge index idx
+var findTube = function findTube(p, idx) {
+	return p.tubes.map(function (t, i) {
+		return [i, t];
+	}).filter(function (t) {
+		return t[1].from === idx || t[1].to === idx;
+	})[0];
 };
 
 var detectFlow = function detectFlow(grid, numFlows) {
@@ -20796,10 +20846,10 @@ var detectFlow = function detectFlow(grid, numFlows) {
 };
 
 var initialState = {
-	width: 10,
-	height: 10,
+	width: 5,
+	height: 5,
 	numFlows: 3,
-	grid: detectFlow(makeGrid(10, 10), 3),
+	grid: detectFlow(makeGrid(5, 5, 3), 3),
 	updated: 0
 };
 

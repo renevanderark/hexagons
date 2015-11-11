@@ -15,12 +15,70 @@ const randomTubes = () => {
 };
 
 
-const makeGrid = (w, h) => {
+const getNeighbourDims = (p, outlet) =>
+	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
+	.map((ar) => [ar[0] + p.x, ar[1] + p.y])[outlet];
+
+
+const getGridPieceAt = (d, grid) =>
+	Object.keys(grid).filter((k) => grid[k].x === d[0] && grid[k].y === d[1])[0] || null;
+
+// Convert rotated index of given edge back to real index
+const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
+
+// Returns the corresponding edge of a neighbour to given edge index
+const connectsAt = (num) => absConnector(num + 3);
+
+
+const makeTube = (entryPoint, p, grid) => {
+	let available = [0, 1, 2, 3, 4, 5]
+		.filter((idx) => idx !== entryPoint)
+		.filter((idx) => p.tubes.filter((t) => t.from === idx || t.to === idx).length === 0);
+
+	let connectors = available
+		.filter((idx) => getGridPieceAt(getNeighbourDims(p, idx), grid));
+
+	let exits = available
+		.filter((idx) => !getGridPieceAt(getNeighbourDims(p, idx), grid));
+
+	if(connectors.length === 0 && exits.length === 0) { return false; }
+	return {
+		from: entryPoint,
+		to: connectors.length ?
+			connectors[Math.floor(Math.random() * connectors.length)] :
+			exits[Math.floor(Math.random() * exits.length)],
+		hasFlow: 0
+	};
+};
+
+const addTubes = (grid, start) => {
+	let entryPoint = 0;
+	let current = "" + start;
+
+	while(current) {
+		let newTube = makeTube(entryPoint, grid[current], grid);
+		if(newTube) {
+			grid[current].tubes.push(newTube);
+			entryPoint = connectsAt(newTube.to);
+			current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
+		} else {
+			throw new Error("complete failure");
+		}
+	}
+
+	return grid;
+};
+
+
+const makeGrid = (w, h, numFlows = 1) => {
 	let grid = {};
 	for(let x = 0, i = 0; x < w; x++) {
 		for(let y = 0; y < h; y++, i++) {
-			grid[i] = {x: x, y: y, rotation: 360, tubes: randomTubes()};
+			grid[i] = {x: x, y: y, rotation: 360, tubes: []};
 		}
+	}
+	for(let i = 0; i < numFlows; i++) {
+		grid = addTubes(grid, i);
 	}
 	return grid;
 };
@@ -28,27 +86,14 @@ const makeGrid = (w, h) => {
 // Convert rotation to current index of top left edge
 const absRotation = (degs) => 6 - ((degs < 0 ? 360 + degs : degs) / 60);
 
-// Convert rotated index of given edge back to real index
-const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
-
 const normConn = (abscon) => abscon < 0 ? 6 + abscon : abscon;
 
-// Returns the corresponding edge of a neighbour to given edge index
-const connectsAt = (num) => absConnector(num + 3);
 
 // Find the tube of gridpiece p at a given edge index idx
 const findTube = (p, idx) =>
 	p.tubes
 		.map((t, i) => [i, t])
 		.filter((t) => (t[1].from === idx || t[1].to === idx))[0];
-
-const getNeighbourDims = (p, outlet) =>
-	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
-	.map((ar) => [ar[0] + p.x, ar[1] + p.y])[outlet];
-
-const getGridPieceAt = (d, grid) =>
-	Object.keys(grid).filter((k) => grid[k].x === d[0] && grid[k].y === d[1])[0] || null;
-
 
 const detectFlow = (grid, numFlows) => {
 	for(let k in grid) {
@@ -77,10 +122,10 @@ const detectFlow = (grid, numFlows) => {
 };
 
 let initialState = {
-	width: 10,
-	height: 10,
+	width: 5,
+	height: 5,
 	numFlows: 3,
-	grid: detectFlow(makeGrid(10, 10), 3),
+	grid: detectFlow(makeGrid(5, 5, 3), 3),
 	updated: 0
 };
 
