@@ -20732,16 +20732,23 @@ var availableEdges = function availableEdges(entryPoint, p) {
 	});
 };
 
+var connectingEdges = function connectingEdges(edges, p, grid) {
+	return edges.filter(function (idx) {
+		return getGridPieceAt(getNeighbourDims(p, idx), grid);
+	});
+};
+
+var exitingEdges = function exitingEdges(edges, p, grid) {
+	return edges.filter(function (idx) {
+		return !getGridPieceAt(getNeighbourDims(p, idx), grid);
+	});
+};
+
 var makeTube = function makeTube(entryPoint, p, grid) {
 	var available = availableEdges(entryPoint, p);
 
-	var connectors = available.filter(function (idx) {
-		return getGridPieceAt(getNeighbourDims(p, idx), grid);
-	});
-
-	var exits = available.filter(function (idx) {
-		return !getGridPieceAt(getNeighbourDims(p, idx), grid);
-	});
+	var connectors = connectingEdges(available, p, grid);
+	var exits = exitingEdges(available, p, grid);
 
 	if (connectors.length === 0 && exits.length === 0) {
 		return false;

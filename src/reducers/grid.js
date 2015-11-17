@@ -17,14 +17,18 @@ const availableEdges = (entryPoint, p) =>
 		.filter((idx) => idx !== entryPoint)
 		.filter((idx) => p.tubes.filter((t) => t.from === idx || t.to === idx).length === 0);
 
+const connectingEdges = (edges, p, grid) =>
+	edges.filter((idx) => getGridPieceAt(getNeighbourDims(p, idx), grid));
+
+const exitingEdges = (edges, p, grid) =>
+	edges.filter((idx) => !getGridPieceAt(getNeighbourDims(p, idx), grid));
+
 const makeTube = (entryPoint, p, grid) => {
 	let available = availableEdges(entryPoint, p);
 
-	let connectors = available
-		.filter((idx) => getGridPieceAt(getNeighbourDims(p, idx), grid));
+	let connectors = connectingEdges(available, p, grid);
+	let exits = exitingEdges(available, p, grid);
 
-	let exits = available
-		.filter((idx) => !getGridPieceAt(getNeighbourDims(p, idx), grid));
 
 	if(connectors.length === 0 && exits.length === 0) { return false; }
 	return {
