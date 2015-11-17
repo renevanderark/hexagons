@@ -20722,14 +20722,18 @@ var connectsAt = function connectsAt(num) {
 	return absConnector(num + 3);
 };
 
-var makeTube = function makeTube(entryPoint, p, grid) {
-	var available = [0, 1, 2, 3, 4, 5].filter(function (idx) {
+var availableEdges = function availableEdges(entryPoint, p) {
+	return [0, 1, 2, 3, 4, 5].filter(function (idx) {
 		return idx !== entryPoint;
 	}).filter(function (idx) {
 		return p.tubes.filter(function (t) {
 			return t.from === idx || t.to === idx;
 		}).length === 0;
 	});
+};
+
+var makeTube = function makeTube(entryPoint, p, grid) {
+	var available = availableEdges(entryPoint, p);
 
 	var connectors = available.filter(function (idx) {
 		return getGridPieceAt(getNeighbourDims(p, idx), grid);
@@ -20769,22 +20773,6 @@ var addTubes = function addTubes(grid, start) {
 	}
 
 	return [last, newTube.to, length];
-};
-
-var makeGrid = function makeGrid(w, h) {
-	var numFlows = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
-
-	var grid = {};
-	for (var x = 0, i = 0; x < w; x++) {
-		for (var y = 0; y < h; y++, i++) {
-			grid[i] = { x: x, y: y, rotation: 360, tubes: [] };
-		}
-	}
-
-	for (var i = 0; i < numFlows; i++) {
-		console.log(i, addTubes(grid, i * h));
-	}
-	return grid;
 };
 
 // Convert rotation to current index of top left edge
@@ -20833,8 +20821,24 @@ var detectFlow = function detectFlow(grid, numFlows, h) {
 	return grid;
 };
 
-var H = 3;
-var W = 3;
+var makeGrid = function makeGrid(w, h) {
+	var numFlows = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+
+	var grid = {};
+	for (var x = 0, i = 0; x < w; x++) {
+		for (var y = 0; y < h; y++, i++) {
+			grid[i] = { x: x, y: y, rotation: 360, tubes: [] };
+		}
+	}
+
+	for (var i = 0; i < numFlows; i++) {
+		console.log(i, addTubes(grid, i * h));
+	}
+	return grid;
+};
+
+var H = 1;
+var W = 2;
 var F = 2;
 
 var initialState = {

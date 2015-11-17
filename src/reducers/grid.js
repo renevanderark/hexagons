@@ -12,11 +12,13 @@ const absConnector = (absRot) => absRot > 5 ? absRot - 6 : absRot;
 // Returns the corresponding edge of a neighbour to given edge index
 const connectsAt = (num) => absConnector(num + 3);
 
-
-const makeTube = (entryPoint, p, grid) => {
-	let available = [0, 1, 2, 3, 4, 5]
+const availableEdges = (entryPoint, p) =>
+	[0, 1, 2, 3, 4, 5]
 		.filter((idx) => idx !== entryPoint)
 		.filter((idx) => p.tubes.filter((t) => t.from === idx || t.to === idx).length === 0);
+
+const makeTube = (entryPoint, p, grid) => {
+	let available = availableEdges(entryPoint, p);
 
 	let connectors = available
 		.filter((idx) => getGridPieceAt(getNeighbourDims(p, idx), grid));
@@ -56,20 +58,6 @@ const addTubes = (grid, start) => {
 };
 
 
-const makeGrid = (w, h, numFlows = 1) => {
-	let grid = {};
-	for(let x = 0, i = 0; x < w; x++) {
-		for(let y = 0; y < h; y++, i++) {
-			grid[i] = {x: x, y: y, rotation: 360, tubes: []};
-		}
-	}
-
-	for(let i = 0; i < numFlows; i++) {
-		console.log(i, addTubes(grid, i * h));
-	}
-	return grid;
-};
-
 // Convert rotation to current index of top left edge
 const absRotation = (degs) => 6 - ((degs < 0 ? 360 + degs : degs) / 60);
 
@@ -108,8 +96,22 @@ const detectFlow = (grid, numFlows, h) => {
 	return grid;
 };
 
-const H = 3;
-const W = 3;
+const makeGrid = (w, h, numFlows = 1) => {
+	let grid = {};
+	for(let x = 0, i = 0; x < w; x++) {
+		for(let y = 0; y < h; y++, i++) {
+			grid[i] = {x: x, y: y, rotation: 360, tubes: []};
+		}
+	}
+
+	for(let i = 0; i < numFlows; i++) {
+		console.log(i, addTubes(grid, i * h));
+	}
+	return grid;
+};
+
+const H = 1;
+const W = 2;
 const F = 2;
 
 let initialState = {
