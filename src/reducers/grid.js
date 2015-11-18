@@ -17,16 +17,18 @@ const availableEdges = (entryPoint, p) =>
 		.filter((idx) => idx !== entryPoint)
 		.filter((idx) => p.tubes.filter((t) => t.from === idx || t.to === idx).length === 0);
 
-const connectingEdges = (edges, p, grid) =>
-	edges.filter((idx) => getGridPieceAt(getNeighbourDims(p, idx), grid));
+const connectingEdges = (edges, p, grid, blocked) =>
+	edges.filter((idx) => {
+		let p1 = getGridPieceAt(getNeighbourDims(p, idx), grid);
+		return p1 && blocked.filter((b) => b[0] === p1 && b[1] === connectsAt(idx)).length === 0;
+	});
 
 const exitingEdges = (edges, p, grid) =>
 	edges.filter((idx) => !getGridPieceAt(getNeighbourDims(p, idx), grid));
 
-const makeTube = (entryPoint, p, grid, gridBorders) => {
+const makeTube = (entryPoint, p, grid, gridBorders, blocked) => {
 	let available = availableEdges(entryPoint, p);
-
-	let connectors = connectingEdges(available, p, grid);
+	let connectors = connectingEdges(available, p, grid, blocked);
 	let exits = exitingEdges(available, p, grid)
 		.filter((idx) => gridBorders[p.key].indexOf(idx) > -1);
 
@@ -48,8 +50,8 @@ const makeTube = (entryPoint, p, grid, gridBorders) => {
 	};
 };
 
-const addTube = (grid, gridBorders, current, entryPoint) => {
-	let newTube = makeTube(entryPoint, grid[current], grid, gridBorders);
+const addTube = (grid, gridBorders, current, entryPoint, blocked) => {
+	let newTube = makeTube(entryPoint, grid[current], grid, gridBorders, blocked);
 	let last;
 	if(newTube) {
 		grid[current].tubes.push(newTube);
@@ -81,16 +83,17 @@ const addTubes = (grid, gridBorders, numFlows) => {
 	}
 
 
-	let newTubes = [], lasts = [], done = 0;
+	let newTubes = [], lasts = [], blocked = [], done = 0;
 
 	while(done < numFlows) {
 		for(let i = 0; i < numFlows; i++) {
 			if(currents[i] === null) { continue; }
-			let output = addTube(grid, gridBorders, currents[i], entryPoints[i]);
+			let output = addTube(grid, gridBorders, currents[i], entryPoints[i], blocked);
 			newTubes[i] = output.newTube;
 			entryPoints[i] = output.entryPoint;
 			lasts[i] = output.last;
 			currents[i] = output.current;
+			blocked[i] = [lasts[i], newTubes[i].to];
 			if(currents[i] === null) {
 				exits[i] = [lasts[i], newTubes[i].to];
 				done++;
@@ -98,24 +101,6 @@ const addTubes = (grid, gridBorders, numFlows) => {
 		}
 	}
 
-/*
-	while(current) {
-		let output = addTube(grid, gridBorders, current, entryPoint);
-		newTube = output.newTube;
-		entryPoint = output.entryPoint;
-		last = output.last;
-		current = output.current;
-	}
-*/
-
-//	return {
-//		entryPoint: start,
-//		exit: [last, newTube.to]
-//	};
-	console.log({
-		entryPoints: starts,
-		exits: exits
-	});
 	return {
 		entryPoints: starts,
 		exits: exits
@@ -187,19 +172,13 @@ const makeGrid = (w, h, numFlows = 1) => {
 				return o;
 			}, {});
 
-//	let entryPoints = [];
-//	let exits = [];
-//	for(let i = 0; i < numFlows; i++) {
-		let {entryPoints, exits} = addTubes(grid, gridBorders, numFlows);
-//		entryPoints.push(entryPoint);
-//		exits.push(exit);
-//	}
+	let {entryPoints, exits} = addTubes(grid, gridBorders, numFlows);
 	return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
 };
 
-const H = 2;
+const H = 1;
 const W = 2;
-const F = 2;
+const F = 4;
 
 let initialState = {
 	width: W,
