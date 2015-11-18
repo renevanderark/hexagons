@@ -20611,6 +20611,79 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var _react = _dereq_("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var strokes = ["", "rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+
+var fills = ["", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
+
+var Entry = (function (_React$Component) {
+	_inherits(Entry, _React$Component);
+
+	function Entry() {
+		_classCallCheck(this, Entry);
+
+		_get(Object.getPrototypeOf(Entry.prototype), "constructor", this).apply(this, arguments);
+	}
+
+	_createClass(Entry, [{
+		key: "shouldComponentUpdate",
+		value: function shouldComponentUpdate() {
+			return false;
+		}
+	}, {
+		key: "makePoints",
+		value: function makePoints() {
+			return "152,1 152,15 156,15 150,20 144,15 148,15 148,1";
+		}
+	}, {
+		key: "setTransform",
+		value: function setTransform() {
+			var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
+			return "translate(" + position[0] + ", " + position[1] + ") rotate(" + (this.props.idx - 1) * 60 + ", 150, 130)";
+		}
+	}, {
+		key: "render",
+		value: function render() {
+			return _react2["default"].createElement(
+				"g",
+				{ transform: this.setTransform() },
+				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow], points: this.makePoints(), stroke: strokes[this.props.hasFlow], strokeWidth: "1" })
+			);
+		}
+	}]);
+
+	return Entry;
+})(_react2["default"].Component);
+
+Entry.propTypes = {
+	gridPiece: _react2["default"].PropTypes.object,
+	hasFlow: _react2["default"].PropTypes.number,
+	idx: _react2["default"].PropTypes.number
+};
+
+exports["default"] = Entry;
+module.exports = exports["default"];
+
+},{"react":155}],168:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -20769,7 +20842,8 @@ Hexagon.propTypes = {
 	gridPiece: _react2["default"].PropTypes.object,
 	onRelease: _react2["default"].PropTypes.func,
 	onRotate: _react2["default"].PropTypes.func,
-	tubes: _react2["default"].PropTypes.array
+	tubes: _react2["default"].PropTypes.array,
+	updated: _react2["default"].PropTypes.number
 };
 
 Hexagon.defaultProps = {
@@ -20779,7 +20853,7 @@ Hexagon.defaultProps = {
 exports["default"] = Hexagon;
 module.exports = exports["default"];
 
-},{"./tube":168,"react":155}],168:[function(_dereq_,module,exports){
+},{"./tube":169,"react":155}],169:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20840,7 +20914,7 @@ Tube.propTypes = {
 exports["default"] = Tube;
 module.exports = exports["default"];
 
-},{"react":155}],169:[function(_dereq_,module,exports){
+},{"react":155}],170:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -20856,6 +20930,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
+
+var _componentsEntry = _dereq_("./components/entry");
+
+var _componentsEntry2 = _interopRequireDefault(_componentsEntry);
 
 var _componentsHexagon = _dereq_("./components/hexagon");
 
@@ -20912,6 +20990,15 @@ var App = (function (_React$Component) {
 			});
 		}
 	}, {
+		key: "renderEntryPoints",
+		value: function renderEntryPoints() {
+			var _this2 = this;
+
+			return this.state.entryPoints.map(function (e, i) {
+				return _react2["default"].createElement(_componentsEntry2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i });
+			});
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			return _react2["default"].createElement(
@@ -20925,7 +21012,8 @@ var App = (function (_React$Component) {
 						return ev.preventDefault();
 					},
 					width: this.state.width * 225 + 75 },
-				this.renderGrid()
+				this.renderGrid(),
+				this.renderEntryPoints()
 			);
 		}
 	}]);
@@ -20935,7 +21023,7 @@ var App = (function (_React$Component) {
 
 _react2["default"].render(_react2["default"].createElement(App, null), document.body);
 
-},{"./components/hexagon":167,"./reducers/store":171,"react":155}],170:[function(_dereq_,module,exports){
+},{"./components/entry":167,"./components/hexagon":168,"./reducers/store":172,"react":155}],171:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20978,7 +21066,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{"../api":166}],171:[function(_dereq_,module,exports){
+},{"../api":166}],172:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20998,5 +21086,5 @@ var store = (0, _redux.createStore)(_grid2["default"]);
 exports["default"] = store;
 module.exports = exports["default"];
 
-},{"./grid":170,"redux":157}]},{},[169])(169)
+},{"./grid":171,"redux":157}]},{},[170])(170)
 });

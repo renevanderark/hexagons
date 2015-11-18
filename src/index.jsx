@@ -1,4 +1,5 @@
 import React from "react";
+import Entry from "./components/entry";
 import Hexagon from "./components/hexagon";
 import store from "./reducers/store";
 
@@ -33,7 +34,13 @@ class App extends React.Component {
 				position={[this.state.grid[k].x * 225, (this.state.grid[k].y * 260) + ((this.state.grid[k].x % 2) * 130) ]}
 				rotation={this.state.grid[k].rotation}
 				tubes={this.state.grid[k].tubes}
-				updated={this.state.updated}  />
+				updated={this.state.updated} />
+		));
+	}
+
+	renderEntryPoints() {
+		return this.state.entryPoints.map((e, i) => (
+			<Entry gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} />
 		));
 	}
 
@@ -45,6 +52,7 @@ class App extends React.Component {
 				onTouchStart={(ev) => ev.preventDefault()}
 				width={this.state.width * 225 + 75}>
 				{this.renderGrid()}
+				{this.renderEntryPoints()}
 			</svg>
 		);
 	}
