@@ -20364,6 +20364,252 @@ process.umask = function() { return 0; };
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var getNeighbourDims = function getNeighbourDims(p, outlet) {
+	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
+		return [ar[0] + p.x, ar[1] + p.y];
+	})[outlet];
+};
+
+var getGridPieceAt = function getGridPieceAt(d, grid) {
+	return Object.keys(grid).filter(function (k) {
+		return grid[k].x === d[0] && grid[k].y === d[1];
+	})[0] || null;
+};
+
+// Convert rotated index of given edge back to real index
+var absConnector = function absConnector(absRot) {
+	return absRot > 5 ? absRot - 6 : absRot;
+};
+
+// Returns the corresponding edge of a neighbour to given edge index
+var connectsAt = function connectsAt(num) {
+	return absConnector(num + 3);
+};
+
+var availableEdges = function availableEdges(entryPoint, p) {
+	return [0, 1, 2, 3, 4, 5].filter(function (idx) {
+		return idx !== entryPoint;
+	}).filter(function (idx) {
+		return p.tubes.filter(function (t) {
+			return t.from === idx || t.to === idx;
+		}).length === 0;
+	});
+};
+
+var connectingEdges = function connectingEdges(edges, p, grid, blocked) {
+	return edges.filter(function (idx) {
+		var p1 = getGridPieceAt(getNeighbourDims(p, idx), grid);
+		return p1 && blocked.filter(function (b) {
+			return b[0] === p1 && b[1] === connectsAt(idx);
+		}).length === 0;
+	});
+};
+
+var exitingEdges = function exitingEdges(edges, p, grid) {
+	return edges.filter(function (idx) {
+		return !getGridPieceAt(getNeighbourDims(p, idx), grid);
+	});
+};
+
+var makeTube = function makeTube(entryPoint, p, grid, gridBorders, blocked) {
+	var available = availableEdges(entryPoint, p);
+	var connectors = connectingEdges(available, p, grid, blocked);
+	var exits = exitingEdges(available, p, grid).filter(function (idx) {
+		return gridBorders[p.key].indexOf(idx) > -1;
+	});
+
+	if (connectors.length === 0 && exits.length === 0) {
+		return false;
+	}
+
+	var to = connectors.length ? connectors[Math.floor(Math.random() * connectors.length)] : exits[Math.floor(Math.random() * exits.length)];
+
+	// using an exit, so drop the exit point from available grid borders
+	if (connectors.length === 0) {
+		gridBorders[p.key].splice(gridBorders[p.key].indexOf(to), 1);
+	}
+
+	return {
+		from: entryPoint,
+		to: to,
+		hasFlow: 0
+	};
+};
+
+var addTube = function addTube(grid, gridBorders, current, entryPoint, blocked) {
+	var newTube = makeTube(entryPoint, grid[current], grid, gridBorders, blocked);
+	var last = undefined;
+	if (newTube) {
+		grid[current].tubes.push(newTube);
+		entryPoint = connectsAt(newTube.to);
+		last = current;
+		current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
+	} else {
+		throw new Error("complete failure");
+	}
+	return { newTube: newTube, last: last, current: current, entryPoint: entryPoint };
+};
+
+var addTubes = function addTubes(grid, gridBorders, numFlows) {
+	var exits = [];
+	var entryPoints = [];
+	var currents = [];
+	var starts = [];
+	for (var i = 0; i < numFlows; i++) {
+		var current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
+		while (gridBorders[current].length === 0) {
+			current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
+		}
+		var entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
+
+		var start = [current, entryPoint];
+
+		currents.push(current);
+		starts.push(start);
+		entryPoints.push(entryPoint);
+
+		gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
+	}
+
+	var newTubes = [],
+	    lasts = [],
+	    blocked = [],
+	    done = 0;
+
+	while (done < numFlows) {
+		for (var i = 0; i < numFlows; i++) {
+			if (currents[i] === null) {
+				continue;
+			}
+			var output = addTube(grid, gridBorders, currents[i], entryPoints[i], blocked);
+			newTubes[i] = output.newTube;
+			entryPoints[i] = output.entryPoint;
+			lasts[i] = output.last;
+			currents[i] = output.current;
+			blocked[i] = [lasts[i], newTubes[i].to];
+			if (currents[i] === null) {
+				exits[i] = [lasts[i], newTubes[i].to];
+				done++;
+			}
+		}
+	}
+
+	return {
+		entryPoints: starts,
+		exits: exits
+	};
+};
+
+// Convert rotation to current index of top left edge
+var absRotation = function absRotation(degs) {
+	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
+};
+
+var normConn = function normConn(abscon) {
+	return abscon < 0 ? 6 + abscon : abscon;
+};
+
+// Find the tube of gridpiece p at a given edge index idx
+var findTube = function findTube(p, idx) {
+	return p.tubes.map(function (t, i) {
+		return [i, t];
+	}).filter(function (t) {
+		return t[1].from === idx || t[1].to === idx;
+	})[0];
+};
+
+var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
+	for (var k in grid) {
+		grid[k].tubes = grid[k].tubes.map(function (t) {
+			return { from: t.from, to: t.to, hasFlow: 0 };
+		});
+	}
+
+	var complete = 0;
+	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
+		var current = entryPoints[flowIdx - 1][0];
+		var entryPoint = entryPoints[flowIdx - 1][1];
+		var last = current;
+		var lastOutlet = -1;
+		while (current) {
+			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
+			var itsTube = findTube(grid[current], abscon);
+
+			if (itsTube) {
+				grid[current].tubes[itsTube[0]].hasFlow = flowIdx;
+				var outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
+				outlet = normConn(outlet - absRotation(grid[current].rotation));
+				entryPoint = connectsAt(outlet);
+				last = current;
+				lastOutlet = outlet;
+				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
+			} else {
+				current = null;
+			}
+		}
+		if (last === exits[flowIdx - 1][0] && lastOutlet === exits[flowIdx - 1][1]) {
+			complete++;
+		}
+	}
+	console.log(complete);
+	return grid;
+};
+
+var makeGrid = function makeGrid(_x2, _x3) {
+	var _arguments = arguments;
+	var _again = true;
+
+	_function: while (_again) {
+		var w = _x2,
+		    h = _x3;
+		_again = false;
+		var numFlows = _arguments.length <= 2 || _arguments[2] === undefined ? 1 : _arguments[2];
+
+		var grid = {};
+		for (var x = 0, i = 0; x < w; x++) {
+			for (var y = 0; y < h; y++, i++) {
+				grid[i] = { x: x, y: y, rotation: 360, tubes: [], key: "" + i };
+			}
+		}
+
+		var gridBorders = Object.keys(grid).map(function (k) {
+			return exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map(function (edge) {
+				return [k, edge];
+			});
+		}).reduce(function (a, b) {
+			return a.concat(b);
+		}).reduce(function (o, v) {
+			o[v[0]] = o[v[0]] || [];
+			o[v[0]].push(v[1]);
+			return o;
+		}, {});
+
+		try {
+			var _addTubes = addTubes(grid, gridBorders, numFlows);
+
+			var entryPoints = _addTubes.entryPoints;
+			var exits = _addTubes.exits;
+
+			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
+		} catch (e) {
+			console.warn("failed to make grid");
+			_arguments = [_x2 = w, _x3 = h, numFlows];
+			_again = true;
+			numFlows = grid = x = i = y = gridBorders = undefined;
+			continue _function;
+		}
+	}
+};
+
+exports.makeGrid = makeGrid;
+exports.detectFlow = detectFlow;
+
+},{}],167:[function(_dereq_,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
@@ -20533,7 +20779,7 @@ Hexagon.defaultProps = {
 exports["default"] = Hexagon;
 module.exports = exports["default"];
 
-},{"./tube":167,"react":155}],167:[function(_dereq_,module,exports){
+},{"./tube":168,"react":155}],168:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20570,10 +20816,13 @@ var Tube = (function (_React$Component) {
 	_createClass(Tube, [{
 		key: "makePoints",
 		value: function makePoints() {
-			var from = dims[this.props.from];
+			var fr = dims[this.props.from];
+			if (typeof fr === "undefined") {
+				console.log(this.props.from);
+			}
 			var to = dims[this.props.to];
 			var bend = [150, 130];
-			return "M " + from.join(",") + " Q " + bend.join(",") + " " + to.join(",");
+			return "M " + fr.join(",") + " Q " + bend.join(",") + " " + to.join(",");
 		}
 	}, {
 		key: "render",
@@ -20594,7 +20843,7 @@ Tube.propTypes = {
 exports["default"] = Tube;
 module.exports = exports["default"];
 
-},{"react":155}],168:[function(_dereq_,module,exports){
+},{"react":155}],169:[function(_dereq_,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -20689,7 +20938,7 @@ var App = (function (_React$Component) {
 
 _react2["default"].render(_react2["default"].createElement(App, null), document.body);
 
-},{"./components/hexagon":166,"./reducers/store":170,"react":155}],169:[function(_dereq_,module,exports){
+},{"./components/hexagon":167,"./reducers/store":171,"react":155}],170:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20700,239 +20949,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var getNeighbourDims = function getNeighbourDims(p, outlet) {
-	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
-		return [ar[0] + p.x, ar[1] + p.y];
-	})[outlet];
-};
-
-var getGridPieceAt = function getGridPieceAt(d, grid) {
-	return Object.keys(grid).filter(function (k) {
-		return grid[k].x === d[0] && grid[k].y === d[1];
-	})[0] || null;
-};
-
-// Convert rotated index of given edge back to real index
-var absConnector = function absConnector(absRot) {
-	return absRot > 5 ? absRot - 6 : absRot;
-};
-
-// Returns the corresponding edge of a neighbour to given edge index
-var connectsAt = function connectsAt(num) {
-	return absConnector(num + 3);
-};
-
-var availableEdges = function availableEdges(entryPoint, p) {
-	return [0, 1, 2, 3, 4, 5].filter(function (idx) {
-		return idx !== entryPoint;
-	}).filter(function (idx) {
-		return p.tubes.filter(function (t) {
-			return t.from === idx || t.to === idx;
-		}).length === 0;
-	});
-};
-
-var connectingEdges = function connectingEdges(edges, p, grid, blocked) {
-	return edges.filter(function (idx) {
-		var p1 = getGridPieceAt(getNeighbourDims(p, idx), grid);
-		return p1 && blocked.filter(function (b) {
-			return b[0] === p1 && b[1] === connectsAt(idx);
-		}).length === 0;
-	});
-};
-
-var exitingEdges = function exitingEdges(edges, p, grid) {
-	return edges.filter(function (idx) {
-		return !getGridPieceAt(getNeighbourDims(p, idx), grid);
-	});
-};
-
-var makeTube = function makeTube(entryPoint, p, grid, gridBorders, blocked) {
-	var available = availableEdges(entryPoint, p);
-	var connectors = connectingEdges(available, p, grid, blocked);
-	var exits = exitingEdges(available, p, grid).filter(function (idx) {
-		return gridBorders[p.key].indexOf(idx) > -1;
-	});
-
-	if (connectors.length === 0 && exits.length === 0) {
-		return false;
-	}
-
-	var to = connectors.length ? connectors[Math.floor(Math.random() * connectors.length)] : exits[Math.floor(Math.random() * exits.length)];
-
-	// using an exit, so drop the exit point from available grid borders
-	if (connectors.length === 0) {
-		gridBorders[p.key].splice(gridBorders[p.key].indexOf(to), 1);
-	}
-
-	return {
-		from: entryPoint,
-		to: to,
-		hasFlow: 0
-	};
-};
-
-var addTube = function addTube(grid, gridBorders, current, entryPoint, blocked) {
-	var newTube = makeTube(entryPoint, grid[current], grid, gridBorders, blocked);
-	var last = undefined;
-	if (newTube) {
-		grid[current].tubes.push(newTube);
-		entryPoint = connectsAt(newTube.to);
-		last = current;
-		current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
-	} else {
-		throw new Error("complete failure");
-	}
-	return { newTube: newTube, last: last, current: current, entryPoint: entryPoint };
-};
-
-var addTubes = function addTubes(grid, gridBorders, numFlows) {
-	var exits = [];
-	var entryPoints = [];
-	var currents = [];
-	var starts = [];
-	for (var i = 0; i < numFlows; i++) {
-		// Take an entry point from the remaining available gridBorders
-		var current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
-		var entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
-		var start = [current, entryPoint];
-
-		currents.push(current);
-		starts.push(start);
-		entryPoints.push(entryPoint);
-
-		gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
-	}
-
-	var newTubes = [],
-	    lasts = [],
-	    blocked = [],
-	    done = 0;
-
-	while (done < numFlows) {
-		for (var i = 0; i < numFlows; i++) {
-			if (currents[i] === null) {
-				continue;
-			}
-			var output = addTube(grid, gridBorders, currents[i], entryPoints[i], blocked);
-			newTubes[i] = output.newTube;
-			entryPoints[i] = output.entryPoint;
-			lasts[i] = output.last;
-			currents[i] = output.current;
-			blocked[i] = [lasts[i], newTubes[i].to];
-			if (currents[i] === null) {
-				exits[i] = [lasts[i], newTubes[i].to];
-				done++;
-			}
-		}
-	}
-
-	return {
-		entryPoints: starts,
-		exits: exits
-	};
-};
-
-// Convert rotation to current index of top left edge
-var absRotation = function absRotation(degs) {
-	return 6 - (degs < 0 ? 360 + degs : degs) / 60;
-};
-
-var normConn = function normConn(abscon) {
-	return abscon < 0 ? 6 + abscon : abscon;
-};
-
-// Find the tube of gridpiece p at a given edge index idx
-var findTube = function findTube(p, idx) {
-	return p.tubes.map(function (t, i) {
-		return [i, t];
-	}).filter(function (t) {
-		return t[1].from === idx || t[1].to === idx;
-	})[0];
-};
-
-var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
-	for (var k in grid) {
-		grid[k].tubes = grid[k].tubes.map(function (t) {
-			return { from: t.from, to: t.to, hasFlow: 0 };
-		});
-	}
-
-	var complete = 0;
-	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		var current = entryPoints[flowIdx - 1][0];
-		var entryPoint = entryPoints[flowIdx - 1][1];
-		var last = current;
-		var lastOutlet = -1;
-		while (current) {
-			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
-			var itsTube = findTube(grid[current], abscon);
-
-			if (itsTube) {
-				grid[current].tubes[itsTube[0]].hasFlow = flowIdx;
-				var outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
-				outlet = normConn(outlet - absRotation(grid[current].rotation));
-				entryPoint = connectsAt(outlet);
-				last = current;
-				lastOutlet = outlet;
-				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
-			} else {
-				current = null;
-			}
-		}
-		if (last === exits[flowIdx - 1][0] && lastOutlet === exits[flowIdx - 1][1]) {
-			complete++;
-		}
-	}
-	console.log(complete);
-	return grid;
-};
-
-var makeGrid = function makeGrid(_x2, _x3) {
-	var _arguments = arguments;
-	var _again = true;
-
-	_function: while (_again) {
-		var w = _x2,
-		    h = _x3;
-		_again = false;
-		var numFlows = _arguments.length <= 2 || _arguments[2] === undefined ? 1 : _arguments[2];
-
-		var grid = {};
-		for (var x = 0, i = 0; x < w; x++) {
-			for (var y = 0; y < h; y++, i++) {
-				grid[i] = { x: x, y: y, rotation: 360, tubes: [], key: "" + i };
-			}
-		}
-
-		var gridBorders = Object.keys(grid).map(function (k) {
-			return exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map(function (edge) {
-				return [k, edge];
-			});
-		}).reduce(function (a, b) {
-			return a.concat(b);
-		}).reduce(function (o, v) {
-			o[v[0]] = o[v[0]] || [];
-			o[v[0]].push(v[1]);
-			return o;
-		}, {});
-
-		try {
-			var _addTubes = addTubes(grid, gridBorders, numFlows);
-
-			var entryPoints = _addTubes.entryPoints;
-			var exits = _addTubes.exits;
-
-			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
-		} catch (e) {
-			console.warn("failed to make grid");
-			_arguments = [_x2 = w, _x3 = h, numFlows];
-			_again = true;
-			numFlows = grid = x = i = y = gridBorders = undefined;
-			continue _function;
-		}
-	}
-};
+var _api = _dereq_("../api");
 
 var H = 3;
 var W = 5;
@@ -20942,7 +20959,7 @@ var initialState = _extends({
 	width: W,
 	height: H,
 	numFlows: F
-}, makeGrid(W, H, F), {
+}, (0, _api.makeGrid)(W, H, F), {
 	updated: 0
 });
 
@@ -20955,7 +20972,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
-			newState.grid = detectFlow(newState.grid, state.numFlows, state.entryPoints, state.exits);
+			newState.grid = (0, _api.detectFlow)(newState.grid, state.numFlows, state.entryPoints, state.exits);
 			return newState;
 		default:
 			return state;
@@ -20964,7 +20981,7 @@ exports["default"] = function (state, action) {
 
 module.exports = exports["default"];
 
-},{}],170:[function(_dereq_,module,exports){
+},{"../api":166}],171:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20984,5 +21001,5 @@ var store = (0, _redux.createStore)(_grid2["default"]);
 exports["default"] = store;
 module.exports = exports["default"];
 
-},{"./grid":169,"redux":157}]},{},[168])(168)
+},{"./grid":170,"redux":157}]},{},[169])(169)
 });

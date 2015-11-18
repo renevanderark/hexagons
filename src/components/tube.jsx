@@ -22,10 +22,11 @@ const strokes = [
 class Tube extends React.Component {
 
 	makePoints() {
-		let from = dims[this.props.from];
+		let fr = dims[this.props.from];
+		if(typeof fr === "undefined") { console.log(this.props.from); }
 		let to = dims[this.props.to];
 		let bend = [150, 130];
-		return `M ${from.join(",")} Q ${bend.join(",")} ${to.join(",")}`;
+		return `M ${fr.join(",")} Q ${bend.join(",")} ${to.join(",")}`;
 	}
 
 	render() {
