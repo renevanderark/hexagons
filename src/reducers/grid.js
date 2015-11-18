@@ -23,31 +23,42 @@ const connectingEdges = (edges, p, grid) =>
 const exitingEdges = (edges, p, grid) =>
 	edges.filter((idx) => !getGridPieceAt(getNeighbourDims(p, idx), grid));
 
-const makeTube = (entryPoint, p, grid) => {
+const makeTube = (entryPoint, p, grid, gridBorders) => {
 	let available = availableEdges(entryPoint, p);
 
 	let connectors = connectingEdges(available, p, grid);
-	let exits = exitingEdges(available, p, grid);
-
+	let exits = exitingEdges(available, p, grid)
+		.filter((idx) => gridBorders[p.key].indexOf(idx) > -1);
 
 	if(connectors.length === 0 && exits.length === 0) { return false; }
+
+	let to = connectors.length ?
+		connectors[Math.floor(Math.random() * connectors.length)] :
+		exits[Math.floor(Math.random() * exits.length)];
+
+	// using an exit, so drop the exit point from available grid borders
+	if(connectors.length === 0) {
+		gridBorders[p.key].splice(gridBorders[p.key].indexOf(to), 1);
+	}
+
 	return {
 		from: entryPoint,
-		to: connectors.length ?
-			connectors[Math.floor(Math.random() * connectors.length)] :
-			exits[Math.floor(Math.random() * exits.length)],
+		to: to,
 		hasFlow: 0
 	};
 };
 
-const addTubes = (grid, start) => {
-	let entryPoint = 1;
+const addTubes = (grid, gridBorders) => {
+	// Take an entry point from the remaining available gridBorders
+	let current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
+	let entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
+	gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
+
 	let length = 0;
-	let current = "" + start;
 	let newTube, last;
 	while(current) {
 		length++;
-		newTube = makeTube(entryPoint, grid[current], grid);
+		newTube = makeTube(entryPoint, grid[current], grid, gridBorders);
 		if(newTube) {
 			grid[current].tubes.push(newTube);
 			entryPoint = connectsAt(newTube.to);
@@ -57,7 +68,7 @@ const addTubes = (grid, start) => {
 			throw new Error("complete failure");
 		}
 	}
-
+	// TODO: return {entryPoint: [key, edgeIdx], exit: [key, edgeIdx], length: length }
 	return [last, newTube.to, length];
 };
 
@@ -104,14 +115,25 @@ const makeGrid = (w, h, numFlows = 1) => {
 	let grid = {};
 	for(let x = 0, i = 0; x < w; x++) {
 		for(let y = 0; y < h; y++, i++) {
-			grid[i] = {x: x, y: y, rotation: 360, tubes: []};
+			grid[i] = {x: x, y: y, rotation: 360, tubes: [], key: "" + i};
 		}
 	}
 
+	let gridBorders = Object.keys(grid)
+			.map((k) => exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map((edge) => [k, edge]))
+			.reduce((a, b) => a.concat(b))
+			.reduce((o, v) => {
+				o[v[0]] = o[v[0]] || [];
+				o[v[0]].push(v[1]);
+				return o;
+			}, {});
+
 	for(let i = 0; i < numFlows; i++) {
-		console.log(i, addTubes(grid, i * h));
+		// TODO: store {entryPoint, exit, length }
+		console.log(i, addTubes(grid, gridBorders));
 	}
-	return grid;
+	// TODO: return {grid: detectFlow(grid, numFlows, h), entryPoints: [...], exits: [...] }
+	return {grid: detectFlow(grid, numFlows, h)};
 };
 
 const H = 1;
@@ -122,7 +144,7 @@ let initialState = {
 	width: W,
 	height: H,
 	numFlows: F,
-	grid: detectFlow(makeGrid(W, H, F), F, H),
+	...makeGrid(W, H, F), // TODO will have: ...{grid: {...}, entrypoints: [...], exits: [...]}
 	updated: 0
 };
 
