@@ -20753,21 +20753,24 @@ var Hexagon = (function (_React$Component) {
 
 		var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
 		this.center = { x: position[0] + 150, y: position[1] + 150 };
-		this.mouseMoveListener = this.onMouseMove.bind(this);
-		this.mouseUpListener = this.onMouseUp.bind(this);
-		this.mouseState = "UP";
-		this.initAngle = 0;
-		this.lastAngle = 0;
+		this.nextRotation = this.props.gridPiece.rotation;
+
+		this.animationFrameListener = this.onAnimationFrame.bind(this);
 	}
 
 	_createClass(Hexagon, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
 			_react2["default"].initializeTouchEvents(true);
-			window.addEventListener("mousemove", this.mouseMoveListener);
-			window.addEventListener("touchmove", this.mouseMoveListener);
-			window.addEventListener("mouseup", this.mouseUpListener);
-			window.addEventListener("touchend", this.mouseUpListener);
+			window.requestAnimationFrame(this.animationFrameListener);
+		}
+	}, {
+		key: "componentWillReceiveProps",
+		value: function componentWillReceiveProps(nextProps) {
+			if (this.props.gridPiece.rotation !== nextProps.gridPiece.rotation && nextProps.gridPiece.rotation % 60 === 0) {
+				this.nextRotation = snapTo(normalizeAngle(nextProps.gridPiece.rotation));
+				this.props.onRelease(this.nextRotation);
+			}
 		}
 	}, {
 		key: "shouldComponentUpdate",
@@ -20777,47 +20780,64 @@ var Hexagon = (function (_React$Component) {
 	}, {
 		key: "componentWillUnmount",
 		value: function componentWillUnmount() {
-			window.removeEventListener("mousemove", this.mouseMoveListener);
-			window.removeEventListener("touchmove", this.mouseMoveListener);
-			window.removeEventListener("mouseup", this.mouseUpListener);
-			window.removeEventListener("touchend", this.mouseUpListener);
+			window.cancelAnimationFrame(this.animationFrameListener);
 		}
 	}, {
-		key: "onMouseMove",
-		value: function onMouseMove(ev) {
-			if (this.mouseState === "DOWN") {
-				var _getEventPos = getEventPos(ev.touches ? ev.touches[0] : ev);
+		key: "onAnimationFrame",
+		value: function onAnimationFrame() {
+			var _this = this;
 
-				var clientX = _getEventPos.clientX;
-				var clientY = _getEventPos.clientY;
-
-				var newAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
-				this.props.onRotate(this.lastAngle + Math.floor(this.initAngle - newAngle));
+			if (this.nextRotation < this.props.rotation) {
+				this.props.onRotate(this.props.rotation - 10);
+			} else if (this.nextRotation > this.props.rotation) {
+				this.props.onRotate(this.props.rotation + 10);
 			}
-			return ev.preventDefault;
-		}
-	}, {
-		key: "onMouseUp",
-		value: function onMouseUp(ev) {
-			if (this.mouseState === "DOWN") {
-				this.props.onRelease(snapTo(normalizeAngle(this.props.gridPiece.rotation)));
-			}
-			this.mouseState = "UP";
-			return ev.preventDefault;
+			setTimeout(function () {
+				return window.requestAnimationFrame(_this.animationFrameListener);
+			}, 15);
 		}
 	}, {
 		key: "onMouseDown",
 		value: function onMouseDown(ev) {
-			this.mouseState = "DOWN";
+			var _getEventPos = getEventPos(ev);
 
-			var _getEventPos2 = getEventPos(ev.touches ? ev.touches[0] : ev);
+			var clientX = _getEventPos.clientX;
+			var clientY = _getEventPos.clientY;
+
+			this.nextRotation = clientX > this.center.x ? this.nextRotation + 60 : this.nextRotation - 60;
+		}
+	}, {
+		key: "onTouchStart",
+		value: function onTouchStart(ev) {
+			var _getEventPos2 = getEventPos(ev.touches[0]);
 
 			var clientX = _getEventPos2.clientX;
 			var clientY = _getEventPos2.clientY;
 
-			this.lastAngle = this.props.gridPiece.rotation;
-			this.initAngle = getAngle(clientX - this.center.x, clientY - this.center.y);
-			return ev.preventDefault;
+			console.log(clientX, this.center.x);
+			this.initX = clientX;
+			this.initY = clientY;
+			this.nextX = clientX;
+			this.nextY = clientY;
+		}
+	}, {
+		key: "onTouchMove",
+		value: function onTouchMove(ev) {
+			var _getEventPos3 = getEventPos(ev.touches[0]);
+
+			var clientX = _getEventPos3.clientX;
+			var clientY = _getEventPos3.clientY;
+
+			this.nextX = clientX;
+			this.nextY = clientY;
+		}
+	}, {
+		key: "onTouchEnd",
+		value: function onTouchEnd() {
+			if (this.nextX === this.initX && this.nextY === this.initY) {
+				this.nextRotation = this.initX > this.center.x ? // TODO: recompute this.center.x based on real image width when zoomed
+				this.nextRotation + 60 : this.nextRotation - 60;
+			}
 		}
 	}, {
 		key: "setTransform",
@@ -20830,7 +20850,11 @@ var Hexagon = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"g",
-				{ onMouseDown: this.onMouseDown.bind(this), onTouchStart: this.onMouseDown.bind(this), transform: this.setTransform() },
+				{ onMouseDown: this.onMouseDown.bind(this),
+					onTouchEnd: this.onTouchEnd.bind(this),
+					onTouchMove: this.onTouchMove.bind(this),
+					onTouchStart: this.onTouchStart.bind(this),
+					transform: this.setTransform() },
 				this.props.tubes.map(function (tube, i) {
 					return _react2["default"].createElement(_tube2["default"], _extends({ key: i }, tube));
 				}),
@@ -21035,12 +21059,6 @@ var App = (function (_React$Component) {
 					"svg",
 					{
 						height: this.state.height * 260 + 130,
-						onMouseDown: function (ev) {
-							return ev.preventDefault();
-						},
-						onTouchStart: function (ev) {
-							return ev.preventDefault();
-						},
 						width: this.state.width * 225 + 75 },
 					this.renderGrid(),
 					this.renderArrows("entryPoints"),

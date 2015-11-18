@@ -53,8 +53,6 @@ class App extends React.Component {
 		return (<div>{header}
 			<svg
 				height={this.state.height * 260 + 130}
-				onMouseDown={(ev) => ev.preventDefault()}
-				onTouchStart={(ev) => ev.preventDefault()}
 				width={this.state.width * 225 + 75}>
 				{this.renderGrid()}
 				{this.renderArrows("entryPoints")}
