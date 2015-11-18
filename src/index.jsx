@@ -44,8 +44,13 @@ class App extends React.Component {
 		));
 	}
 
+	onNextGame() {
+		store.dispatch({type: "NEXT_GAME"});
+	}
+
 	render() {
-		return (
+		let header = this.state.finished ? (<div><h1>Comgratiomelations</h1><button onClick={this.onNextGame.bind(this)}>OK nextz</button></div>) : null;
+		return (<div>{header}
 			<svg
 				height={this.state.height * 260 + 130}
 				onMouseDown={(ev) => ev.preventDefault()}
@@ -55,7 +60,7 @@ class App extends React.Component {
 				{this.renderArrows("entryPoints")}
 				{this.renderArrows("exits")}
 			</svg>
-		);
+		</div>);
 	}
 }
 React.render(<App />, document.body);
