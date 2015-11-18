@@ -20774,6 +20774,7 @@ var addTubes = function addTubes(grid, gridBorders) {
 	// Take an entry point from the remaining available gridBorders
 	var current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
 	var entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
+	var start = [current, entryPoint];
 	gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
 
 	var length = 0;
@@ -20791,8 +20792,12 @@ var addTubes = function addTubes(grid, gridBorders) {
 			throw new Error("complete failure");
 		}
 	}
-	// TODO: return {entryPoint: [key, edgeIdx], exit: [key, edgeIdx], length: length }
-	return [last, newTube.to, length];
+
+	return {
+		entryPoint: start,
+		exit: [last, newTube.to],
+		length: length
+	};
 };
 
 // Convert rotation to current index of top left edge
@@ -20813,7 +20818,7 @@ var findTube = function findTube(p, idx) {
 	})[0];
 };
 
-var detectFlow = function detectFlow(grid, numFlows, h) {
+var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 	for (var k in grid) {
 		grid[k].tubes = grid[k].tubes.map(function (t) {
 			return { from: t.from, to: t.to, hasFlow: 0 };
@@ -20821,8 +20826,9 @@ var detectFlow = function detectFlow(grid, numFlows, h) {
 	}
 
 	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		var current = "" + (flowIdx - 1) * h;
-		var entryPoint = 1;
+		console.log(entryPoints[flowIdx - 1]);
+		var current = entryPoints[flowIdx - 1][0];
+		var entryPoint = entryPoints[flowIdx - 1][1];
 		while (current) {
 			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
 			var itsTube = findTube(grid[current], abscon);
@@ -20851,8 +20857,6 @@ var makeGrid = function makeGrid(w, h) {
 		}
 	}
 
-	//const exitingEdges = (edges, p, grid) =>
-
 	var gridBorders = Object.keys(grid).map(function (k) {
 		return exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map(function (edge) {
 			return [k, edge];
@@ -20865,12 +20869,20 @@ var makeGrid = function makeGrid(w, h) {
 		return o;
 	}, {});
 
+	var entryPoints = [];
+	var exits = [];
 	for (var i = 0; i < numFlows; i++) {
-		// TODO: store {entryPoint, exit, length }
-		console.log(i, addTubes(grid, gridBorders));
+		var _addTubes = addTubes(grid, gridBorders);
+
+		var entryPoint = _addTubes.entryPoint;
+		var exit = _addTubes.exit;
+		var _length = _addTubes.length;
+
+		entryPoints.push(entryPoint);
+		exits.push(exit);
+		console.log(_length);
 	}
-	// TODO: return {grid: detectFlow(grid, numFlows, h), entryPoints: [...], exits: [...] }
-	return { grid: detectFlow(grid, numFlows, h) };
+	return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
 };
 
 var H = 1;
@@ -20881,7 +20893,7 @@ var initialState = _extends({
 	width: W,
 	height: H,
 	numFlows: F
-}, makeGrid(W, H, F), { // TODO will have: ...{grid: {...}, entrypoints: [...], exits: [...]}
+}, makeGrid(W, H, F), {
 	updated: 0
 });
 
@@ -20894,7 +20906,7 @@ exports["default"] = function (state, action) {
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
-			newState.grid = detectFlow(newState.grid, state.numFlows, state.height);
+			newState.grid = detectFlow(newState.grid, state.numFlows, state.entryPoints, state.exits);
 			return newState;
 		default:
 			return state;
