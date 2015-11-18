@@ -20784,27 +20784,66 @@ var addTube = function addTube(grid, gridBorders, current, entryPoint) {
 	return { newTube: newTube, last: last, current: current, entryPoint: entryPoint };
 };
 
-var addTubes = function addTubes(grid, gridBorders) {
-	// Take an entry point from the remaining available gridBorders
-	var current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
-	var entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
-	var start = [current, entryPoint];
-	gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
+var addTubes = function addTubes(grid, gridBorders, numFlows) {
+	var exits = [];
+	var entryPoints = [];
+	var currents = [];
+	var starts = [];
+	for (var i = 0; i < numFlows; i++) {
+		// Take an entry point from the remaining available gridBorders
+		var current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
+		var entryPoint = gridBorders[current][Math.floor(Math.random() * gridBorders[current].length)];
+		var start = [current, entryPoint];
 
-	var newTube = undefined,
-	    last = undefined;
+		currents.push(current);
+		starts.push(start);
+		entryPoints.push(entryPoint);
 
-	while (current) {
-		var output = addTube(grid, gridBorders, current, entryPoint);
-		newTube = output.newTube;
-		entryPoint = output.entryPoint;
-		last = output.last;
-		current = output.current;
+		gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
 	}
 
+	var newTubes = [],
+	    lasts = [],
+	    done = 0;
+
+	while (done < numFlows) {
+		for (var i = 0; i < numFlows; i++) {
+			if (currents[i] === null) {
+				continue;
+			}
+			var output = addTube(grid, gridBorders, currents[i], entryPoints[i]);
+			newTubes[i] = output.newTube;
+			entryPoints[i] = output.entryPoint;
+			lasts[i] = output.last;
+			currents[i] = output.current;
+			if (currents[i] === null) {
+				exits[i] = [lasts[i], newTubes[i].to];
+				done++;
+			}
+		}
+	}
+
+	/*
+ 	while(current) {
+ 		let output = addTube(grid, gridBorders, current, entryPoint);
+ 		newTube = output.newTube;
+ 		entryPoint = output.entryPoint;
+ 		last = output.last;
+ 		current = output.current;
+ 	}
+ */
+
+	//	return {
+	//		entryPoint: start,
+	//		exit: [last, newTube.to]
+	//	};
+	console.log({
+		entryPoints: starts,
+		exits: exits
+	});
 	return {
-		entryPoint: start,
-		exit: [last, newTube.to]
+		entryPoints: starts,
+		exits: exits
 	};
 };
 
@@ -20885,23 +20924,23 @@ var makeGrid = function makeGrid(w, h) {
 		return o;
 	}, {});
 
-	var entryPoints = [];
-	var exits = [];
-	for (var i = 0; i < numFlows; i++) {
-		var _addTubes = addTubes(grid, gridBorders);
+	//	let entryPoints = [];
+	//	let exits = [];
+	//	for(let i = 0; i < numFlows; i++) {
+	var _addTubes = addTubes(grid, gridBorders, numFlows);
 
-		var entryPoint = _addTubes.entryPoint;
-		var exit = _addTubes.exit;
+	var entryPoints = _addTubes.entryPoints;
+	var exits = _addTubes.exits;
 
-		entryPoints.push(entryPoint);
-		exits.push(exit);
-	}
+	//		entryPoints.push(entryPoint);
+	//		exits.push(exit);
+	//	}
 	return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
 };
 
-var H = 4;
-var W = 4;
-var F = 4;
+var H = 2;
+var W = 2;
+var F = 2;
 
 var initialState = _extends({
 	width: W,
