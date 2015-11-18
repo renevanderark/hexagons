@@ -20364,6 +20364,8 @@ process.umask = function() { return 0; };
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+var degs = [60, 120, 180, 240, 300];
+
 var getNeighbourDims = function getNeighbourDims(p, outlet) {
 	return [[-1, -1 + p.x % 2], [0, -1], [1, -1 + p.x % 2], [1, p.x % 2], [0, 1], [-1, p.x % 2]].map(function (ar) {
 		return [ar[0] + p.x, ar[1] + p.y];
@@ -20573,7 +20575,7 @@ var makeGrid = function makeGrid(_x2, _x3) {
 		var grid = {};
 		for (var x = 0, i = 0; x < w; x++) {
 			for (var y = 0; y < h; y++, i++) {
-				grid[i] = { x: x, y: y, rotation: 360, tubes: [], key: "" + i };
+				grid[i] = { x: x, y: y, rotation: degs[Math.floor(Math.random() * degs.length)], tubes: [], key: "" + i };
 			}
 		}
 
@@ -21034,8 +21036,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 var _api = _dereq_("../api");
 
 var H = 3;
-var W = 5;
-var F = 6;
+var W = 3;
+var F = 3;
 
 var initialState = _extends({
 	width: W,

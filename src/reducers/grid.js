@@ -1,8 +1,8 @@
 import {makeGrid, detectFlow} from "../api";
 
 const H = 3;
-const W = 5;
-const F = 6;
+const W = 3;
+const F = 3;
 
 let initialState = {
 	width: W,

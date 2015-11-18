@@ -1,3 +1,5 @@
+const degs = [60, 120, 180, 240, 300];
+
 const getNeighbourDims = (p, outlet) =>
 	[[-1, -1 + (p.x % 2)], [0, -1], [1, -1 + (p.x % 2)], [1, (p.x % 2)], [0, 1], [-1, (p.x % 2)]]
 	.map((ar) => [ar[0] + p.x, ar[1] + p.y])[outlet];
@@ -168,7 +170,7 @@ const makeGrid = (w, h, numFlows = 1) => {
 	let grid = {};
 	for(let x = 0, i = 0; x < w; x++) {
 		for(let y = 0; y < h; y++, i++) {
-			grid[i] = {x: x, y: y, rotation: 360, tubes: [], key: "" + i};
+			grid[i] = {x: x, y: y, rotation: degs[Math.floor(Math.random() * degs.length)], tubes: [], key: "" + i};
 		}
 	}
 
