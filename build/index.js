@@ -20625,30 +20625,20 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var strokes = ["", "rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+var fills = ["rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
 
-var fills = ["", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
+var strokes = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
 
-var Entry = (function (_React$Component) {
-	_inherits(Entry, _React$Component);
+var Arrow = (function (_React$Component) {
+	_inherits(Arrow, _React$Component);
 
-	function Entry() {
-		_classCallCheck(this, Entry);
+	function Arrow() {
+		_classCallCheck(this, Arrow);
 
-		_get(Object.getPrototypeOf(Entry.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(Arrow.prototype), "constructor", this).apply(this, arguments);
 	}
 
-	_createClass(Entry, [{
-		key: "shouldComponentUpdate",
-		value: function shouldComponentUpdate() {
-			return false;
-		}
-	}, {
-		key: "makePoints",
-		value: function makePoints() {
-			return "152,1 152,15 156,15 150,20 144,15 148,15 148,1";
-		}
-	}, {
+	_createClass(Arrow, [{
 		key: "setTransform",
 		value: function setTransform() {
 			var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
@@ -20660,21 +20650,21 @@ var Entry = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"g",
 				{ transform: this.setTransform() },
-				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow], points: this.makePoints(), stroke: strokes[this.props.hasFlow], strokeWidth: "1" })
+				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: "1" })
 			);
 		}
 	}]);
 
-	return Entry;
+	return Arrow;
 })(_react2["default"].Component);
 
-Entry.propTypes = {
+Arrow.propTypes = {
 	gridPiece: _react2["default"].PropTypes.object,
 	hasFlow: _react2["default"].PropTypes.number,
 	idx: _react2["default"].PropTypes.number
 };
 
-exports["default"] = Entry;
+exports["default"] = Arrow;
 module.exports = exports["default"];
 
 },{"react":155}],168:[function(_dereq_,module,exports){
@@ -20931,9 +20921,9 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _componentsEntry = _dereq_("./components/entry");
+var _componentsArrow = _dereq_("./components/arrow");
 
-var _componentsEntry2 = _interopRequireDefault(_componentsEntry);
+var _componentsArrow2 = _interopRequireDefault(_componentsArrow);
 
 var _componentsHexagon = _dereq_("./components/hexagon");
 
@@ -20995,7 +20985,7 @@ var App = (function (_React$Component) {
 			var _this2 = this;
 
 			return this.state.entryPoints.map(function (e, i) {
-				return _react2["default"].createElement(_componentsEntry2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i });
+				return _react2["default"].createElement(_componentsArrow2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i });
 			});
 		}
 	}, {
@@ -21023,7 +21013,7 @@ var App = (function (_React$Component) {
 
 _react2["default"].render(_react2["default"].createElement(App, null), document.body);
 
-},{"./components/entry":167,"./components/hexagon":168,"./reducers/store":172,"react":155}],171:[function(_dereq_,module,exports){
+},{"./components/arrow":167,"./components/hexagon":168,"./reducers/store":172,"react":155}],171:[function(_dereq_,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

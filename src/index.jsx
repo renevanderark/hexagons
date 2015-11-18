@@ -1,5 +1,5 @@
 import React from "react";
-import Entry from "./components/entry";
+import Arrow from "./components/arrow";
 import Hexagon from "./components/hexagon";
 import store from "./reducers/store";
 
@@ -40,7 +40,7 @@ class App extends React.Component {
 
 	renderEntryPoints() {
 		return this.state.entryPoints.map((e, i) => (
-			<Entry gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} />
+			<Arrow gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} />
 		));
 	}
 
