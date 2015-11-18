@@ -172,13 +172,18 @@ const makeGrid = (w, h, numFlows = 1) => {
 				return o;
 			}, {});
 
-	let {entryPoints, exits} = addTubes(grid, gridBorders, numFlows);
-	return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
+	try {
+		let {entryPoints, exits} = addTubes(grid, gridBorders, numFlows);
+		return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
+	} catch(e) {
+		console.warn("failed to make grid");
+		return makeGrid(w, h, numFlows);
+	}
 };
 
-const H = 1;
-const W = 2;
-const F = 4;
+const H = 3;
+const W = 5;
+const F = 6;
 
 let initialState = {
 	width: W,

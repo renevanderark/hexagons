@@ -20556,7 +20556,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var dims = [[37.5, 65], [150, 0], [262.5, 65], [262.5, 195], [150, 260], [37.5, 195]];
 
-var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)"];
+var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
 
 var Tube = (function (_React$Component) {
 	_inherits(Tube, _React$Component);
@@ -20888,39 +20888,55 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 	return grid;
 };
 
-var makeGrid = function makeGrid(w, h) {
-	var numFlows = arguments.length <= 2 || arguments[2] === undefined ? 1 : arguments[2];
+var makeGrid = function makeGrid(_x2, _x3) {
+	var _arguments = arguments;
+	var _again = true;
 
-	var grid = {};
-	for (var x = 0, i = 0; x < w; x++) {
-		for (var y = 0; y < h; y++, i++) {
-			grid[i] = { x: x, y: y, rotation: 360, tubes: [], key: "" + i };
+	_function: while (_again) {
+		var w = _x2,
+		    h = _x3;
+		_again = false;
+		var numFlows = _arguments.length <= 2 || _arguments[2] === undefined ? 1 : _arguments[2];
+
+		var grid = {};
+		for (var x = 0, i = 0; x < w; x++) {
+			for (var y = 0; y < h; y++, i++) {
+				grid[i] = { x: x, y: y, rotation: 360, tubes: [], key: "" + i };
+			}
+		}
+
+		var gridBorders = Object.keys(grid).map(function (k) {
+			return exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map(function (edge) {
+				return [k, edge];
+			});
+		}).reduce(function (a, b) {
+			return a.concat(b);
+		}).reduce(function (o, v) {
+			o[v[0]] = o[v[0]] || [];
+			o[v[0]].push(v[1]);
+			return o;
+		}, {});
+
+		try {
+			var _addTubes = addTubes(grid, gridBorders, numFlows);
+
+			var entryPoints = _addTubes.entryPoints;
+			var exits = _addTubes.exits;
+
+			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
+		} catch (e) {
+			console.warn("failed to make grid");
+			_arguments = [_x2 = w, _x3 = h, numFlows];
+			_again = true;
+			numFlows = grid = x = i = y = gridBorders = undefined;
+			continue _function;
 		}
 	}
-
-	var gridBorders = Object.keys(grid).map(function (k) {
-		return exitingEdges([0, 1, 2, 3, 4, 5], grid[k], grid).map(function (edge) {
-			return [k, edge];
-		});
-	}).reduce(function (a, b) {
-		return a.concat(b);
-	}).reduce(function (o, v) {
-		o[v[0]] = o[v[0]] || [];
-		o[v[0]].push(v[1]);
-		return o;
-	}, {});
-
-	var _addTubes = addTubes(grid, gridBorders, numFlows);
-
-	var entryPoints = _addTubes.entryPoints;
-	var exits = _addTubes.exits;
-
-	return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
 };
 
-var H = 1;
-var W = 2;
-var F = 4;
+var H = 3;
+var W = 5;
+var F = 6;
 
 var initialState = _extends({
 	width: W,
