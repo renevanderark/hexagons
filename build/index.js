@@ -20625,9 +20625,7 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var fills = ["rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
-
-var strokes = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+var fills = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
 
 var Arrow = (function (_React$Component) {
 	_inherits(Arrow, _React$Component);
@@ -20642,7 +20640,7 @@ var Arrow = (function (_React$Component) {
 		key: "setTransform",
 		value: function setTransform() {
 			var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
-			return "translate(" + position[0] + ", " + position[1] + ") rotate(" + (this.props.idx - 1) * 60 + ", 150, 130)";
+			return "translate(" + position[0] + ", " + position[1] + ") rotate(" + (this.props.idx - 1) * 60 + ", 150, 130) rotate(" + (this.props.type === "exits" ? 180 : 0) + ", 150, 11)";
 		}
 	}, {
 		key: "render",
@@ -20650,7 +20648,7 @@ var Arrow = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"g",
 				{ transform: this.setTransform() },
-				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: "1" })
+				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: "black", strokeWidth: ".5" })
 			);
 		}
 	}]);
@@ -20661,7 +20659,8 @@ var Arrow = (function (_React$Component) {
 Arrow.propTypes = {
 	gridPiece: _react2["default"].PropTypes.object,
 	hasFlow: _react2["default"].PropTypes.number,
-	idx: _react2["default"].PropTypes.number
+	idx: _react2["default"].PropTypes.number,
+	type: _react2["default"].PropTypes.string
 };
 
 exports["default"] = Arrow;
@@ -20980,12 +20979,12 @@ var App = (function (_React$Component) {
 			});
 		}
 	}, {
-		key: "renderEntryPoints",
-		value: function renderEntryPoints() {
+		key: "renderArrows",
+		value: function renderArrows(type) {
 			var _this2 = this;
 
-			return this.state.entryPoints.map(function (e, i) {
-				return _react2["default"].createElement(_componentsArrow2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i });
+			return this.state[type].map(function (e, i) {
+				return _react2["default"].createElement(_componentsArrow2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i, type: type });
 			});
 		}
 	}, {
@@ -21003,7 +21002,8 @@ var App = (function (_React$Component) {
 					},
 					width: this.state.width * 225 + 75 },
 				this.renderGrid(),
-				this.renderEntryPoints()
+				this.renderArrows("entryPoints"),
+				this.renderArrows("exits")
 			);
 		}
 	}]);

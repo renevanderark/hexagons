@@ -38,9 +38,9 @@ class App extends React.Component {
 		));
 	}
 
-	renderEntryPoints() {
-		return this.state.entryPoints.map((e, i) => (
-			<Arrow gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} />
+	renderArrows(type) {
+		return this.state[type].map((e, i) => (
+			<Arrow gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} type={type} />
 		));
 	}
 
@@ -52,7 +52,8 @@ class App extends React.Component {
 				onTouchStart={(ev) => ev.preventDefault()}
 				width={this.state.width * 225 + 75}>
 				{this.renderGrid()}
-				{this.renderEntryPoints()}
+				{this.renderArrows("entryPoints")}
+				{this.renderArrows("exits")}
 			</svg>
 		);
 	}
