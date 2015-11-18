@@ -13,7 +13,8 @@ const strokes = [
 	"rgba(0,0,0,.3)",
 	"rgba(0,0,255,.6)",
 	"rgba(0,255,0,.6)",
-	"rgba(255,0,0,.6)"
+	"rgba(255,0,0,.6)",
+	"rgba(255,255,0,.6)"
 ];
 
 class Tube extends React.Component {

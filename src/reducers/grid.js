@@ -48,6 +48,20 @@ const makeTube = (entryPoint, p, grid, gridBorders) => {
 	};
 };
 
+const addTube = (grid, gridBorders, current, entryPoint) => {
+	let newTube = makeTube(entryPoint, grid[current], grid, gridBorders);
+	let last;
+	if(newTube) {
+		grid[current].tubes.push(newTube);
+		entryPoint = connectsAt(newTube.to);
+		last = current;
+		current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
+	} else {
+		throw new Error("complete failure");
+	}
+	return {newTube: newTube, last: last, current: current, entryPoint: entryPoint};
+};
+
 const addTubes = (grid, gridBorders) => {
 	// Take an entry point from the remaining available gridBorders
 	let current = Object.keys(gridBorders)[Math.floor(Math.random() * Object.keys(gridBorders).length)];
@@ -55,25 +69,19 @@ const addTubes = (grid, gridBorders) => {
 	let start = [current, entryPoint];
 	gridBorders[current].splice(gridBorders[current].indexOf(entryPoint), 1);
 
-	let length = 0;
 	let newTube, last;
+
 	while(current) {
-		length++;
-		newTube = makeTube(entryPoint, grid[current], grid, gridBorders);
-		if(newTube) {
-			grid[current].tubes.push(newTube);
-			entryPoint = connectsAt(newTube.to);
-			last = current;
-			current = getGridPieceAt(getNeighbourDims(grid[current], newTube.to), grid);
-		} else {
-			throw new Error("complete failure");
-		}
+		let output = addTube(grid, gridBorders, current, entryPoint);
+		newTube = output.newTube;
+		entryPoint = output.entryPoint;
+		last = output.last;
+		current = output.current;
 	}
 
 	return {
 		entryPoint: start,
-		exit: [last, newTube.to],
-		length: length
+		exit: [last, newTube.to]
 	};
 };
 
@@ -145,16 +153,16 @@ const makeGrid = (w, h, numFlows = 1) => {
 	let entryPoints = [];
 	let exits = [];
 	for(let i = 0; i < numFlows; i++) {
-		let {entryPoint, exit, length} = addTubes(grid, gridBorders);
+		let {entryPoint, exit} = addTubes(grid, gridBorders);
 		entryPoints.push(entryPoint);
 		exits.push(exit);
 	}
 	return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
 };
 
-const H = 1;
-const W = 2;
-const F = 2;
+const H = 4;
+const W = 4;
+const F = 4;
 
 let initialState = {
 	width: W,
