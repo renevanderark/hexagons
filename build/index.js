@@ -20474,13 +20474,16 @@ var addTubes = function addTubes(grid, gridBorders, numFlows) {
 	var newTubes = [],
 	    lasts = [],
 	    blocked = [],
-	    done = 0;
+	    done = 0,
+	    lengths = [],
+	    difficulties = [];
 
 	while (done < numFlows) {
 		for (var i = 0; i < numFlows; i++) {
 			if (currents[i] === null) {
 				continue;
 			}
+			lengths[i] = (lengths[i] || 0) + 1;
 			var output = addTube(grid, gridBorders, currents[i], entryPoints[i], blocked);
 			newTubes[i] = output.newTube;
 			entryPoints[i] = output.entryPoint;
@@ -20489,6 +20492,8 @@ var addTubes = function addTubes(grid, gridBorders, numFlows) {
 			blocked[i] = [lasts[i], newTubes[i].to];
 			if (currents[i] === null) {
 				exits[i] = [lasts[i], newTubes[i].to];
+				var delta = Math.sqrt(Math.pow(Math.abs(grid[starts[i][0]].x - grid[exits[i][0]].x), 2) + Math.pow(Math.abs(grid[starts[i][0]].y - grid[exits[i][0]].y), 2));
+				difficulties[i] = delta * (lengths[i] / 10);
 				done++;
 			}
 		}
@@ -20496,6 +20501,7 @@ var addTubes = function addTubes(grid, gridBorders, numFlows) {
 
 	return {
 		entryPoints: starts,
+		difficulties: difficulties,
 		exits: exits
 	};
 };
@@ -20589,7 +20595,11 @@ var makeGrid = function makeGrid(_x2, _x3) {
 
 			var entryPoints = _addTubes.entryPoints;
 			var exits = _addTubes.exits;
+			var difficulties = _addTubes.difficulties;
 
+			console.log("Est. difficulty: ", difficulties.reduce(function (a, b) {
+				return a + b;
+			}));
 			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
 		} catch (e) {
 			console.warn("failed to make grid");
