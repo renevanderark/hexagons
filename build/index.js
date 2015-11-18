@@ -20557,7 +20557,6 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 			complete++;
 		}
 	}
-	console.log(complete);
 	return grid;
 };
 
@@ -20597,12 +20596,10 @@ var makeGrid = function makeGrid(_x2, _x3) {
 			var exits = _addTubes.exits;
 			var difficulties = _addTubes.difficulties;
 
-			console.log("Est. difficulty: ", difficulties.reduce(function (a, b) {
-				return a + b;
-			}));
-			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
+			return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits, difficulty: difficulties.reduce(function (a, b) {
+					return a + b;
+				}) };
 		} catch (e) {
-			console.warn("failed to make grid");
 			_arguments = [_x2 = w, _x3 = h, numFlows];
 			_again = true;
 			numFlows = grid = x = i = y = gridBorders = undefined;

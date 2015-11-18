@@ -161,7 +161,6 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 			complete++;
 		}
 	}
-	console.log(complete);
 	return grid;
 };
 
@@ -184,10 +183,8 @@ const makeGrid = (w, h, numFlows = 1) => {
 
 	try {
 		let {entryPoints, exits, difficulties} = addTubes(grid, gridBorders, numFlows);
-		console.log("Est. difficulty: ", difficulties.reduce((a, b) => a + b));
-		return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
+		return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits, difficulty: difficulties.reduce((a, b) => a + b)};
 	} catch(e) {
-		console.warn("failed to make grid");
 		return makeGrid(w, h, numFlows);
 	}
 };

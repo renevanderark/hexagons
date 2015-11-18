@@ -15,7 +15,7 @@
     "derequire": "^2.0.3",
     "eslint": "^1.8.0",
     "eslint-plugin-react": "^3.7.1",
-    "lodash.debounce": "^3.1.1",    
+    "lodash.debounce": "^3.1.1",
     "react": "^0.13.3",
     "watchify": "^3.6.0"
   },
