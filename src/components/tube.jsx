@@ -23,7 +23,6 @@ class Tube extends React.Component {
 
 	makePoints() {
 		let fr = dims[this.props.from];
-		if(typeof fr === "undefined") { console.log(this.props.from); }
 		let to = dims[this.props.to];
 		let bend = [150, 130];
 		return `M ${fr.join(",")} Q ${bend.join(",")} ${to.join(",")}`;

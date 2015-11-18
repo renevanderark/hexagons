@@ -20817,9 +20817,6 @@ var Tube = (function (_React$Component) {
 		key: "makePoints",
 		value: function makePoints() {
 			var fr = dims[this.props.from];
-			if (typeof fr === "undefined") {
-				console.log(this.props.from);
-			}
 			var to = dims[this.props.to];
 			var bend = [150, 130];
 			return "M " + fr.join(",") + " Q " + bend.join(",") + " " + to.join(",");
