@@ -95,10 +95,12 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 		grid[k].tubes = grid[k].tubes.map((t) => {return {from: t.from, to: t.to, hasFlow: 0}; });
 	}
 
+	let complete = 0;
 	for(let flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		console.log(entryPoints[flowIdx - 1]);
 		let current = entryPoints[flowIdx - 1][0];
 		let entryPoint = entryPoints[flowIdx - 1][1];
+		let last = current;
+		let lastOutlet = -1;
 		while(current) {
 			let abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
 			let itsTube = findTube(grid[current], abscon);
@@ -108,12 +110,18 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 				let outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
 				outlet = normConn(outlet - absRotation(grid[current].rotation));
 				entryPoint = connectsAt(outlet);
+				last = current;
+				lastOutlet = outlet;
 				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
 			} else {
 				current = null;
 			}
 		}
+		if(last === exits[flowIdx - 1][0] && lastOutlet === exits[flowIdx - 1][1]) {
+			complete++;
+		}
 	}
+	console.log(complete);
 	return grid;
 };
 
@@ -140,7 +148,6 @@ const makeGrid = (w, h, numFlows = 1) => {
 		let {entryPoint, exit, length} = addTubes(grid, gridBorders);
 		entryPoints.push(entryPoint);
 		exits.push(exit);
-		console.log(length);
 	}
 	return {grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits};
 };

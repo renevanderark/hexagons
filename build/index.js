@@ -20825,10 +20825,12 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 		});
 	}
 
+	var complete = 0;
 	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
-		console.log(entryPoints[flowIdx - 1]);
 		var current = entryPoints[flowIdx - 1][0];
 		var entryPoint = entryPoints[flowIdx - 1][1];
+		var last = current;
+		var lastOutlet = -1;
 		while (current) {
 			var abscon = absConnector(entryPoint + absRotation(grid[current].rotation));
 			var itsTube = findTube(grid[current], abscon);
@@ -20838,12 +20840,18 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 				var outlet = abscon === itsTube[1].from ? itsTube[1].to : itsTube[1].from;
 				outlet = normConn(outlet - absRotation(grid[current].rotation));
 				entryPoint = connectsAt(outlet);
+				last = current;
+				lastOutlet = outlet;
 				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
 			} else {
 				current = null;
 			}
 		}
+		if (last === exits[flowIdx - 1][0] && lastOutlet === exits[flowIdx - 1][1]) {
+			complete++;
+		}
 	}
+	console.log(complete);
 	return grid;
 };
 
@@ -20880,7 +20888,6 @@ var makeGrid = function makeGrid(w, h) {
 
 		entryPoints.push(entryPoint);
 		exits.push(exit);
-		console.log(_length);
 	}
 	return { grid: detectFlow(grid, numFlows, entryPoints, exits), entryPoints: entryPoints, exits: exits };
 };
