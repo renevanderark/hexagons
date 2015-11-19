@@ -20825,7 +20825,7 @@ var Hexagon = (function (_React$Component) {
 				this.props.tubes.map(function (tube, i) {
 					return _react2["default"].createElement(_tube2["default"], _extends({ key: i }, tube));
 				}),
-				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#aaa", strokeWidth: ".1" })
+				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#aaa", strokeWidth: ".5" })
 			);
 		}
 	}]);
