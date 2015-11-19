@@ -1,4 +1,4 @@
-import {makeGrid, detectFlow} from "../api";
+import {detectFlow} from "../api";
 import games from "../games";
 
 let initialState = {

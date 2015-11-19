@@ -21,16 +21,7 @@ const normalizeAngle = (angle) => {
 	angle %= 360;
 	angle = (angle + 360) % 360;
 	if (angle > 180) { angle -= 360; }
-    return angle;
-};
-
-const getAngle = (dX, dY) => normalizeAngle(Math.atan2(dX, dY) * 180 / Math.PI);
-
-const getEventPos = (ev) => {
-	return {
-		clientX: (window.pageXOffset || document.documentElement.scrollLeft) - (document.documentElement.clientLeft || 0) + ev.clientX,
-		clientY: (window.pageYOffset || document.documentElement.scrollTop) - (document.documentElement.clientTop || 0) + ev.clientY
-	};
+	return angle;
 };
 
 class Hexagon extends React.Component {
@@ -60,29 +51,17 @@ class Hexagon extends React.Component {
 		return this.props.updated !== nextProps.updated || this.props.gridPiece.rotation !== nextProps.gridPiece.rotation;
 	}
 
-
-	componentWillUnmount() {
-		window.cancelAnimationFrame(this.animationFrameListener);
-	}
-
 	onAnimationFrame() {
-		if(this.nextRotation < this.props.rotation) {
-			this.props.onRotate(this.props.rotation - 10);
-		} else if(this.nextRotation > this.props.rotation) {
-			this.props.onRotate(this.props.rotation + 10);
+		if(this.nextRotation < this.props.gridPiece.rotation) {
+			this.props.onRotate(this.props.gridPiece.rotation - 10);
+		} else if(this.nextRotation > this.props.gridPiece.rotation) {
+			this.props.onRotate(this.props.gridPiece.rotation + 10);
 		}
-		setTimeout(() => window.requestAnimationFrame(this.animationFrameListener), 15);
-	}
-
-	onMouseDown(ev) {
-		let {clientX, clientY} = getEventPos(ev);
-		this.nextRotation = clientX > this.center.x ? 
-			this.nextRotation + 60 :
-			this.nextRotation - 60;
+		window.setTimeout(this.animationFrameListener, 5);
 	}
 
 	onTouchStart(ev) {
-		let {clientX, clientY} = getEventPos(ev.touches[0]);
+		let {clientX, clientY} = ev.touches[0];
 		console.log(clientX, this.center.x);
 		this.initX = clientX;
 		this.initY = clientY;
@@ -91,7 +70,7 @@ class Hexagon extends React.Component {
 	}
 
 	onTouchMove(ev) {
-		let {clientX, clientY} = getEventPos(ev.touches[0]);
+		let {clientX, clientY} = ev.touches[0];
 		this.nextX = clientX;
 		this.nextY = clientY;
 	}
@@ -111,10 +90,9 @@ class Hexagon extends React.Component {
 
 	render() {
 		return (
-			<g onMouseDown={this.onMouseDown.bind(this)} 
-				onTouchEnd={this.onTouchEnd.bind(this)}
+			<g 	onTouchEnd={this.onTouchEnd.bind(this)}
 				onTouchMove={this.onTouchMove.bind(this)}
-				onTouchStart={this.onTouchStart.bind(this)} 
+				onTouchStart={this.onTouchStart.bind(this)}
 				transform={this.setTransform()}>
 				{this.props.tubes.map((tube, i) => <Tube key={i} {...tube} /> )}
 				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#aaa" strokeWidth=".1" />
