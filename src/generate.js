@@ -1,9 +1,9 @@
 require("babel/register");
 var api = require("./api");
 
-var F = 4;
-var W = 6;
-var H = 3;
+var F = 3;
+var W = 3;
+var H = 2;
 var games = [];
 for(var i = 0; i < 1000; i++) {
 	var game = api.makeGrid(W, H, F);
