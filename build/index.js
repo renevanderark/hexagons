@@ -20940,14 +20940,14 @@ var Results = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"div",
-				{ style: { position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
+				{ style: { position: "fixed", width: "500%", height: "500%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
 				_react2["default"].createElement(
 					"div",
 					{ style: {
 							position: "fixed",
 							width: "50%",
 							left: "25%",
-							height: "80%",
+							height: "40%",
 							top: "10%",
 							borderRadius: "2%",
 							backgroundColor: "rgba(255,255,255,0.4)",
