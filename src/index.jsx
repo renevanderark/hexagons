@@ -1,6 +1,7 @@
 import React from "react";
 import Arrow from "./components/arrow";
 import Hexagon from "./components/hexagon";
+import Results from "./components/results";
 import store from "./reducers/store";
 
 
@@ -49,8 +50,8 @@ class App extends React.Component {
 	}
 
 	render() {
-		let header = this.state.finished ? (<div><h1>Comgratiomelations</h1><button onClick={this.onNextGame.bind(this)}>OK nextz</button></div>) : null;
-		return (<div>{header}
+		let results = this.state.finished ? <Results onNextGame={this.onNextGame.bind(this)} /> : null;
+		return (<div>{results}
 			<svg
 				height={this.state.height * 260 + 130}
 				width={this.state.width * 225 + 75}>
