@@ -9,6 +9,15 @@ const fills = [
 	"rgb(255,0,255)"
 ];
 
+const strokes = [
+	"rgb(0,0,125)",
+	"rgb(0,125,0)",
+	"rgb(125,0,0)",
+	"rgb(125,255,0)",
+	"rgb(0,125,125)",
+	"rgb(125,0,125)"
+];
+
 class Arrow extends React.Component {
 	setTransform() {
 		let position = [this.props.gridPiece.x * 225, (this.props.gridPiece.y * 260) + ((this.props.gridPiece.x % 2) * 130) ];
@@ -18,7 +27,8 @@ class Arrow extends React.Component {
 	render() {
 		return (
 			<g transform={this.setTransform()}>
-				<polygon fill={fills[this.props.hasFlow - 1]} points="148,1 148,15 145,15 150,20 155,15 152,15 152,1" stroke="black" strokeWidth=".5" />
+				<polygon fill={fills[this.props.hasFlow - 1]} points="148,1 148,15 145,15 150,20 155,15 152,15 152,1" stroke={strokes[this.props.hasFlow - 1]} strokeWidth=".5" />
+				<polygon fill="transparent" points="147,0 147,15 144,15 150,21 156,15 153,15 153,0" stroke="white" strokeWidth="1" />
 			</g>
 		);
 	}

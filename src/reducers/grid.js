@@ -1,8 +1,9 @@
 import {detectFlow} from "../api";
 import games from "../games";
 
-let initialState = {
+let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state"))  : {
 	...games[0],
+	levels: games.length,
 	gameIdx: 0,
 	updated: 0,
 	scores: []
@@ -22,6 +23,8 @@ export default function(state = initialState, action) {
 			return newState;
 		case "NEXT_GAME":
 			return {...games[state.gameIdx + 1], gameIdx: state.gameIdx + 1, updated: 0, finished: false};
+		case "RESET":
+			return {...games[0], gameIdx: 0, updated: 0, finished: false};
 		default:
 			return state;
 	}

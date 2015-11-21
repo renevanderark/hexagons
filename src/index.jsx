@@ -2,6 +2,7 @@ import React from "react";
 import Arrow from "./components/arrow";
 import Hexagon from "./components/hexagon";
 import Results from "./components/results";
+import Header from "./components/header";
 import store from "./reducers/store";
 
 
@@ -49,18 +50,30 @@ class App extends React.Component {
 		store.dispatch({type: "NEXT_GAME"});
 	}
 
+	onReset() {
+		store.dispatch({type: "RESET"});
+	}
+
 	render() {
-		let results = this.state.finished ? <Results onNextGame={this.onNextGame.bind(this)} scores={this.state.scores} /> : null;
-		return (<div>{results}
-			<svg
-				height={this.state.height * 260 + 130}
-				width={this.state.width * 225 + 75}>
-				{this.renderGrid()}
-				{this.renderArrows("entryPoints")}
-				{this.renderArrows("exits")}
-			</svg>
-		</div>);
+		let info = this.state.finished ? 
+			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} /> : 
+			<Header level={this.state.gameIdx + 1} levels={this.state.levels} />;
+		return (
+			<div style={{fontFamily: "sans-serif"}}>
+				{info}
+				<svg
+					height={this.state.height * 260 + 130}
+					width={this.state.width * 225 + 75}>
+					{this.renderGrid()}
+					{this.renderArrows("entryPoints")}
+					{this.renderArrows("exits")}
+				</svg>
+			</div>
+		);
 	}
 }
 React.render(<App />, document.body);
 
+window.addEventListener("unload", () => {
+	localStorage.setItem("saved-state", JSON.stringify(store.getState()));
+});
