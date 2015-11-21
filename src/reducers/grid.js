@@ -4,7 +4,8 @@ import games from "../games";
 let initialState = {
 	...games[0],
 	gameIdx: 0,
-	updated: 0
+	updated: 0,
+	scores: []
 };
 
 export default function(state = initialState, action) {
@@ -14,9 +15,10 @@ export default function(state = initialState, action) {
 			return {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}};
 		case "RELEASE_GRID_PIECE":
 			let newState = {...state, grid: {...state.grid, ...{[action.index]: gridPiece}}, updated: new Date().getTime()};
-			let {grid, finished} = detectFlow(newState.grid, state.numFlows, state.entryPoints, state.exits);
+			let {grid, finished, scores} = detectFlow(newState.grid, state.numFlows, state.entryPoints, state.exits);
 			newState.grid = grid;
 			newState.finished = finished;
+			newState.scores = scores;
 			return newState;
 		case "NEXT_GAME":
 			return {...games[state.gameIdx + 1], gameIdx: state.gameIdx + 1, updated: 0, finished: false};

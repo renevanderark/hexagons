@@ -50,7 +50,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		let results = this.state.finished ? <Results onNextGame={this.onNextGame.bind(this)} /> : null;
+		let results = this.state.finished ? <Results onNextGame={this.onNextGame.bind(this)} scores={this.state.scores} /> : null;
 		return (<div>{results}
 			<svg
 				height={this.state.height * 260 + 130}

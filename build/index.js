@@ -20537,6 +20537,7 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 	}
 
 	var complete = 0;
+	var scores = [];
 	for (var flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
 		var current = entryPoints[flowIdx - 1][0];
 		var entryPoint = entryPoints[flowIdx - 1][1];
@@ -20553,6 +20554,7 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 				entryPoint = connectsAt(outlet);
 				last = current;
 				lastOutlet = outlet;
+				scores[flowIdx - 1] = (scores[flowIdx - 1] || 0) + 1;
 				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
 			} else {
 				current = null;
@@ -20564,7 +20566,8 @@ var detectFlow = function detectFlow(grid, numFlows, entryPoints, exits) {
 	}
 	return {
 		grid: grid,
-		finished: complete === numFlows
+		finished: complete === numFlows,
+		scores: scores
 	};
 };
 
@@ -20783,7 +20786,6 @@ var Hexagon = (function (_React$Component) {
 			var clientX = _ev$touches$0.clientX;
 			var clientY = _ev$touches$0.clientY;
 
-			console.log(clientX, this.center.x);
 			this.initX = clientX;
 			this.initY = clientY;
 			this.nextX = clientX;
@@ -20888,6 +20890,17 @@ var Results = (function (_React$Component) {
 					"h1",
 					null,
 					"Comgratiomelations"
+				),
+				_react2["default"].createElement(
+					"ul",
+					null,
+					this.props.scores.map(function (score, i) {
+						return _react2["default"].createElement(
+							"li",
+							{ key: i },
+							score
+						);
+					})
 				),
 				_react2["default"].createElement(
 					"button",
@@ -21074,7 +21087,7 @@ var App = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this) }) : null;
+			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), scores: this.state.scores }) : null;
 			return _react2["default"].createElement(
 				"div",
 				null,
@@ -21118,7 +21131,8 @@ var _games2 = _interopRequireDefault(_games);
 
 var initialState = _extends({}, _games2["default"][0], {
 	gameIdx: 0,
-	updated: 0
+	updated: 0,
+	scores: []
 });
 
 exports["default"] = function (state, action) {
@@ -21133,10 +21147,12 @@ exports["default"] = function (state, action) {
 
 			var _detectFlow = (0, _api.detectFlow)(newState.grid, state.numFlows, state.entryPoints, state.exits),
 			    grid = _detectFlow.grid,
-			    finished = _detectFlow.finished;
+			    finished = _detectFlow.finished,
+			    scores = _detectFlow.scores;
 
 			newState.grid = grid;
 			newState.finished = finished;
+			newState.scores = scores;
 			return newState;
 		case "NEXT_GAME":
 			return _extends({}, _games2["default"][state.gameIdx + 1], { gameIdx: state.gameIdx + 1, updated: 0, finished: false });

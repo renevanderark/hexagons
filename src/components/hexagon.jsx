@@ -62,7 +62,6 @@ class Hexagon extends React.Component {
 
 	onTouchStart(ev) {
 		let {clientX, clientY} = ev.touches[0];
-		console.log(clientX, this.center.x);
 		this.initX = clientX;
 		this.initY = clientY;
 		this.nextX = clientX;

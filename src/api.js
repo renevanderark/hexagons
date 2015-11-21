@@ -138,6 +138,7 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 	}
 
 	let complete = 0;
+	let scores = [];
 	for(let flowIdx = 1; flowIdx <= numFlows; flowIdx++) {
 		let current = entryPoints[flowIdx - 1][0];
 		let entryPoint = entryPoints[flowIdx - 1][1];
@@ -154,6 +155,7 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 				entryPoint = connectsAt(outlet);
 				last = current;
 				lastOutlet = outlet;
+				scores[flowIdx - 1] = (scores[flowIdx - 1] || 0) + 1;
 				current = getGridPieceAt(getNeighbourDims(grid[current], outlet), grid);
 			} else {
 				current = null;
@@ -165,7 +167,8 @@ const detectFlow = (grid, numFlows, entryPoints, exits) => {
 	}
 	return {
 		grid: grid,
-		finished: complete === numFlows
+		finished: complete === numFlows,
+		scores: scores
 	};
 };
 
