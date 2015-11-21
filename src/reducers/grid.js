@@ -22,9 +22,9 @@ export default function(state = initialState, action) {
 			newState.scores = scores;
 			return newState;
 		case "NEXT_GAME":
-			return {...games[state.gameIdx + 1], gameIdx: state.gameIdx + 1, updated: 0, finished: false};
+			return {...games[state.gameIdx + 1], gameIdx: state.gameIdx + 1, updated: 0, finished: false, levels: games.length};
 		case "RESET":
-			return {...games[0], gameIdx: 0, updated: 0, finished: false};
+			return {...games[0], gameIdx: 0, updated: 0, finished: false, levels: games.length};
 		default:
 			return state;
 	}

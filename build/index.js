@@ -20940,7 +20940,7 @@ var Results = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"div",
-				{ style: { position: "fixed", width: "500%", height: "500%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
+				{ style: { position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
 				_react2["default"].createElement(
 					"div",
 					{ style: {
@@ -21248,9 +21248,9 @@ exports["default"] = function (state, action) {
 			newState.scores = scores;
 			return newState;
 		case "NEXT_GAME":
-			return _extends({}, _games2["default"][state.gameIdx + 1], { gameIdx: state.gameIdx + 1, updated: 0, finished: false });
+			return _extends({}, _games2["default"][state.gameIdx + 1], { gameIdx: state.gameIdx + 1, updated: 0, finished: false, levels: _games2["default"].length });
 		case "RESET":
-			return _extends({}, _games2["default"][0], { gameIdx: 0, updated: 0, finished: false });
+			return _extends({}, _games2["default"][0], { gameIdx: 0, updated: 0, finished: false, levels: _games2["default"].length });
 		default:
 			return state;
 	}
