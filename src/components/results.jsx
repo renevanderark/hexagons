@@ -16,20 +16,21 @@ class Results extends React.Component {
 		return (<div style={{position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)"}}>
 			<div style={{
 				position: "fixed",
-				width: "50%",
-				left: "25%",
-				height: "40%",
-				top: "10%",
+				width: "90%",
+				left: "5%",
+				height: "90%",
+				top: "5%",
 				borderRadius: "2%",
 				backgroundColor: "rgba(255,255,255,0.4)",
-				border: "2px solid rgb(0, 0, 255)",
+				border: "2px solid rgb(0, 0, 255, 0.6)",
 				padding: "5%"
 			}}>
 				<h1>Well Done!</h1>
 				<ul style={{listStyle: "none"}}>
 					{this.props.scores.map((score, i) => (
 						<li key={i}>
-							<label style={{width: "50%", color: fills[i]}}>||</label>{score}
+							<label style={{width: "50%", color: fills[i]}}>||</label>
+							{score * 100}
 						</li>
 					))}
 				</ul>

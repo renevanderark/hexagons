@@ -83,7 +83,7 @@ class Hexagon extends React.Component {
 
 	onTouchEnd() {
 		if(this.nextX === this.initX && this.nextY === this.initY) {
-			this.nextRotation = this.initX > this.center.x ? // TODO: recompute this.center.x based on real image width when zoomed
+			this.nextRotation = this.initX > this.center.x * this.props.scale ? // TODO: recompute this.center.x based on real image width when zoomed
 				this.nextRotation + 60 :
 				this.nextRotation - 60;
 		}
