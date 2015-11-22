@@ -101,7 +101,7 @@ class Hexagon extends React.Component {
 				onTouchStart={this.onTouchStart.bind(this)}
 				transform={this.setTransform()}>
 				{this.props.tubes.map((tube, i) => <Tube key={i} {...tube} /> )}
-				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#aaa" strokeWidth=".5" />
+				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#DDD" strokeWidth="1" />
 			</g>
 		);
 	}

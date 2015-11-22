@@ -20711,22 +20711,37 @@ var _react2 = _interopRequireDefault(_react);
 var Header = (function (_React$Component) {
 	_inherits(Header, _React$Component);
 
-	function Header() {
+	function Header(props) {
 		_classCallCheck(this, Header);
 
-		_get(Object.getPrototypeOf(Header.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(Header.prototype), "constructor", this).call(this, props);
+
+		this.state = { time: 0 };
 	}
 
 	_createClass(Header, [{
+		key: "componentDidMount",
+		value: function componentDidMount() {
+			this.initUpdates();
+		}
+	}, {
+		key: "initUpdates",
+		value: function initUpdates() {
+			this.setState({ time: new Date().getTime() });
+			window.setTimeout(this.initUpdates.bind(this), 200);
+		}
+	}, {
 		key: "render",
 		value: function render() {
 			return _react2["default"].createElement(
 				"header",
 				null,
-				"Lvl: ",
+				"L: ",
 				this.props.level,
 				" / ",
-				this.props.levels
+				this.props.levels,
+				", T: ",
+				Math.floor((new Date().getTime() - this.props.startTime) / 1000)
 			);
 		}
 	}]);
@@ -20889,7 +20904,7 @@ var Hexagon = (function (_React$Component) {
 				this.props.tubes.map(function (tube, i) {
 					return _react2["default"].createElement(_tube2["default"], _extends({ key: i }, tube));
 				}),
-				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#aaa", strokeWidth: ".5" })
+				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#DDD", strokeWidth: "1" })
 			);
 		}
 	}]);
@@ -20977,12 +20992,31 @@ var Results = (function (_React$Component) {
 								{ key: i },
 								_react2["default"].createElement(
 									"label",
-									{ style: { width: "50%", color: fills[i] } },
+									{ style: { display: "inline-block", width: "50%", color: fills[i] } },
 									"||"
 								),
-								score * 100
+								_react2["default"].createElement(
+									"span",
+									{ style: { display: "inline-block", width: "50%", textAlign: "right" } },
+									score * 100
+								)
 							);
-						})
+						}),
+						_react2["default"].createElement(
+							"li",
+							null,
+							_react2["default"].createElement(
+								"label",
+								{ style: { display: "inline-block", width: "50%" } },
+								"T"
+							),
+							_react2["default"].createElement(
+								"span",
+								{ style: { display: "inline-block", width: "50%", textAlign: "right", color: "red" } },
+								"-",
+								Math.floor((new Date().getTime() - this.props.startTime) / 100)
+							)
+						)
 					),
 					_react2["default"].createElement(
 						"button",
@@ -21205,7 +21239,7 @@ var App = (function (_React$Component) {
 	}, {
 		key: "render",
 		value: function render() {
-			var info = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), onReset: this.onReset.bind(this), scores: this.state.scores }) : _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels });
+			var info = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), onReset: this.onReset.bind(this), scores: this.state.scores, startTime: this.state.startTime }) : _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels, startTime: this.state.startTime });
 			return _react2["default"].createElement(
 				"div",
 				{ style: { fontFamily: "sans-serif" } },
@@ -21263,11 +21297,15 @@ var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	gameIdx: 0,
 	updated: 0,
 	scores: [],
-	scale: 1.0
+	scale: 1.0,
+	startTime: new Date().getTime()
 });
 
 if (!initialState.scale) {
 	initialState.scale = 1.0;
+}
+if (!initialState.timer) {
+	initialState.startTime = new Date().getTime();
 }
 
 exports["default"] = function (state, action) {
@@ -21289,12 +21327,25 @@ exports["default"] = function (state, action) {
 			newState.finished = finished;
 			newState.scores = scores;
 			return newState;
-		case "NEXT_GAME":
-			return _extends({}, _games2["default"][state.gameIdx + 1], { gameIdx: state.gameIdx + 1, updated: 0, finished: false, levels: _games2["default"].length, scale: state.scale });
-		case "RESET":
-			return _extends({}, _games2["default"][0], { gameIdx: 0, updated: 0, finished: false, levels: _games2["default"].length, scale: state.scale });
 		case "ZOOM_BY":
 			return _extends({}, state, { scale: state.scale * (action.pinchDelta < 0 ? 1.085 : 0.985) });
+		case "NEXT_GAME":
+			return _extends({}, _games2["default"][state.gameIdx + 1], {
+				gameIdx: state.gameIdx + 1,
+				updated: 0, finished: false,
+				levels: _games2["default"].length,
+				scale: state.scale,
+				startTime: new Date().getTime()
+			});
+		case "RESET":
+			return _extends({}, _games2["default"][0], {
+				gameIdx: 0,
+				updated: 0,
+				finished: false,
+				levels: _games2["default"].length,
+				scale: state.scale,
+				startTime: new Date().getTime()
+			});
 		default:
 			return state;
 	}

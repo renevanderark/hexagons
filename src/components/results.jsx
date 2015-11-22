@@ -29,10 +29,18 @@ class Results extends React.Component {
 				<ul style={{listStyle: "none"}}>
 					{this.props.scores.map((score, i) => (
 						<li key={i}>
-							<label style={{width: "50%", color: fills[i]}}>||</label>
-							{score * 100}
+							<label style={{display: "inline-block", width: "50%", color: fills[i]}}>||</label>
+							<span style={{display: "inline-block", width: "50%", textAlign: "right"}}>
+								{score * 100}
+							</span>
 						</li>
 					))}
+					<li>
+						<label style={{display: "inline-block", width: "50%"}}>T</label>
+						<span style={{display: "inline-block", width: "50%", textAlign: "right", color: "red"}}>
+							-{Math.floor((new Date().getTime() - this.props.startTime) / 100)}
+						</span>
+					</li>
 				</ul>
 				<button onClick={this.props.onNextGame}>Next level</button>
 				<button onClick={this.props.onReset}>Back</button>

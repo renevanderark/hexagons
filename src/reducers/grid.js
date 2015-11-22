@@ -7,12 +7,12 @@ let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	gameIdx: 0,
 	updated: 0,
 	scores: [],
-	scale: 1.0
+	scale: 1.0,
+	startTime: new Date().getTime()
 };
 
-if(!initialState.scale) {
-	initialState.scale = 1.0;
-}
+if(!initialState.scale) { initialState.scale = 1.0; }
+if(!initialState.timer) { initialState.startTime = new Date().getTime(); }
 
 export default function(state = initialState, action) {
 	let gridPiece = {...state.grid[action.index], rotation: action.degs};
@@ -26,12 +26,27 @@ export default function(state = initialState, action) {
 			newState.finished = finished;
 			newState.scores = scores;
 			return newState;
-		case "NEXT_GAME":
-			return {...games[state.gameIdx + 1], gameIdx: state.gameIdx + 1, updated: 0, finished: false, levels: games.length, scale: state.scale};
-		case "RESET":
-			return {...games[0], gameIdx: 0, updated: 0, finished: false, levels: games.length, scale: state.scale};
 		case "ZOOM_BY":
 			return {...state, scale: state.scale * (action.pinchDelta < 0 ? 1.085 : 0.985)};
+		case "NEXT_GAME":
+			return {
+				...games[state.gameIdx + 1],
+				gameIdx: state.gameIdx + 1,
+				updated: 0, finished: false,
+				levels: games.length,
+				scale: state.scale,
+				startTime: new Date().getTime()
+			};
+		case "RESET":
+			return {
+				...games[0],
+				gameIdx: 0,
+				updated: 0,
+				finished: false,
+				levels: games.length,
+				scale: state.scale,
+				startTime: new Date().getTime()
+			};
 		default:
 			return state;
 	}

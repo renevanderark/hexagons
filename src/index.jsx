@@ -89,8 +89,8 @@ class App extends React.Component {
 
 	render() {
 		let info = this.state.finished ? 
-			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} /> : 
-			<Header level={this.state.gameIdx + 1} levels={this.state.levels} />;
+			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} startTime={this.state.startTime} /> : 
+			<Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
 				{info}
