@@ -94,7 +94,9 @@ class App extends React.Component {
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
 				{info}
-				<div onTouchMove={this.onTouchMove.bind(this)} id="canvas-wrapper" style={{height: "95%", width: "100%", overflow: "auto"}}>
+				<div onTouchMove={this.onTouchMove.bind(this)} id="canvas-wrapper" style={{
+					height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+				}}>
 					<svg
 						height={(this.state.height * 260 + 130) * this.state.scale}
 						width={(this.state.width * 225 + 75) * this.state.scale}

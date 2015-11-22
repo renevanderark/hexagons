@@ -10,6 +10,10 @@ let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	scale: 1.0
 };
 
+if(!initialState.scale) {
+	initialState.scale = 1.0;
+}
+
 export default function(state = initialState, action) {
 	let gridPiece = {...state.grid[action.index], rotation: action.degs};
 	switch(action.type) {

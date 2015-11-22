@@ -21212,7 +21212,9 @@ var App = (function (_React$Component) {
 				info,
 				_react2["default"].createElement(
 					"div",
-					{ onTouchMove: this.onTouchMove.bind(this), id: "canvas-wrapper", style: { height: "95%", width: "100%", overflow: "auto" } },
+					{ onTouchMove: this.onTouchMove.bind(this), id: "canvas-wrapper", style: {
+							height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+						} },
 					_react2["default"].createElement(
 						"svg",
 						{
@@ -21263,6 +21265,10 @@ var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	scores: [],
 	scale: 1.0
 });
+
+if (!initialState.scale) {
+	initialState.scale = 1.0;
+}
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
