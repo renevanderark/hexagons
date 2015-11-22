@@ -20788,6 +20788,13 @@ var normalizeAngle = function normalizeAngle(angle) {
 	return angle;
 };
 
+var getEventPos = function getEventPos(ev) {
+	return {
+		clientX: document.getElementById("canvas-wrapper").scrollLeft - (document.getElementById("canvas-wrapper").clientLeft || 0) + ev.clientX,
+		clientY: document.getElementById("canvas-wrapper").scrollTop - (document.getElementById("canvas-wrapper").clientTop || 0) + ev.clientY
+	};
+};
+
 var Hexagon = (function (_React$Component) {
 	_inherits(Hexagon, _React$Component);
 
@@ -20835,9 +20842,10 @@ var Hexagon = (function (_React$Component) {
 	}, {
 		key: "onTouchStart",
 		value: function onTouchStart(ev) {
-			var _ev$touches$0 = ev.touches[0];
-			var clientX = _ev$touches$0.clientX;
-			var clientY = _ev$touches$0.clientY;
+			var _getEventPos = getEventPos(ev.touches[0]);
+
+			var clientX = _getEventPos.clientX;
+			var clientY = _getEventPos.clientY;
 
 			this.initX = clientX;
 			this.initY = clientY;
@@ -20847,9 +20855,10 @@ var Hexagon = (function (_React$Component) {
 	}, {
 		key: "onTouchMove",
 		value: function onTouchMove(ev) {
-			var _ev$touches$02 = ev.touches[0];
-			var clientX = _ev$touches$02.clientX;
-			var clientY = _ev$touches$02.clientY;
+			var _getEventPos2 = getEventPos(ev.touches[0]);
+
+			var clientX = _getEventPos2.clientX;
+			var clientY = _getEventPos2.clientY;
 
 			this.nextX = clientX;
 			this.nextY = clientY;
@@ -21181,13 +21190,17 @@ var App = (function (_React$Component) {
 				{ style: { fontFamily: "sans-serif" } },
 				info,
 				_react2["default"].createElement(
-					"svg",
-					{
-						height: this.state.height * 260 + 130,
-						width: this.state.width * 225 + 75 },
-					this.renderGrid(),
-					this.renderArrows("entryPoints"),
-					this.renderArrows("exits")
+					"div",
+					{ id: "canvas-wrapper", style: { height: "95%", width: "100%", overflow: "auto" } },
+					_react2["default"].createElement(
+						"svg",
+						{
+							height: this.state.height * 260 + 130,
+							width: this.state.width * 225 + 75 },
+						this.renderGrid(),
+						this.renderArrows("entryPoints"),
+						this.renderArrows("exits")
+					)
 				)
 			);
 		}

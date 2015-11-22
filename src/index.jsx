@@ -61,13 +61,15 @@ class App extends React.Component {
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
 				{info}
-				<svg
-					height={this.state.height * 260 + 130}
-					width={this.state.width * 225 + 75}>
-					{this.renderGrid()}
-					{this.renderArrows("entryPoints")}
-					{this.renderArrows("exits")}
-				</svg>
+				<div id="canvas-wrapper" style={{height: "95%", width: "100%", overflow: "auto"}}>
+					<svg
+						height={this.state.height * 260 + 130}
+						width={this.state.width * 225 + 75}>
+						{this.renderGrid()}
+						{this.renderArrows("entryPoints")}
+						{this.renderArrows("exits")}
+					</svg>
+				</div>
 			</div>
 		);
 	}

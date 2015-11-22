@@ -24,6 +24,13 @@ const normalizeAngle = (angle) => {
 	return angle;
 };
 
+const getEventPos = (ev) => {
+	return {
+		clientX: document.getElementById("canvas-wrapper").scrollLeft - (document.getElementById("canvas-wrapper").clientLeft || 0) + ev.clientX,
+		clientY: document.getElementById("canvas-wrapper").scrollTop - (document.getElementById("canvas-wrapper").clientTop || 0) + ev.clientY
+	};
+}
+
 class Hexagon extends React.Component {
 	constructor(props) {
 		super(props);
@@ -61,7 +68,7 @@ class Hexagon extends React.Component {
 	}
 
 	onTouchStart(ev) {
-		let {clientX, clientY} = ev.touches[0];
+		let {clientX, clientY} = getEventPos(ev.touches[0]);
 		this.initX = clientX;
 		this.initY = clientY;
 		this.nextX = clientX;
@@ -69,7 +76,7 @@ class Hexagon extends React.Component {
 	}
 
 	onTouchMove(ev) {
-		let {clientX, clientY} = ev.touches[0];
+		let {clientX, clientY} = getEventPos(ev.touches[0]);
 		this.nextX = clientX;
 		this.nextY = clientY;
 	}
