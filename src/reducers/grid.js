@@ -12,7 +12,7 @@ let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 };
 
 if(!initialState.scale) { initialState.scale = 1.0; }
-if(!initialState.timer) { initialState.startTime = new Date().getTime(); }
+if(!initialState.startTime) { initialState.startTime = new Date().getTime(); }
 
 export default function(state = initialState, action) {
 	let gridPiece = {...state.grid[action.index], rotation: action.degs};
