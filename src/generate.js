@@ -18,12 +18,11 @@ for(var i = 0; i < 10000; i++) {
 games.sort(function(a, b) {
 	return b.difficulty - a.difficulty;
 });
-games = games.filter(function(g, j) { return j < 1000; });
+games = games.filter(function(g, j) { return j < 250; });
 games.sort(function(a, b) {
 	return a.difficulty - b.difficulty;
 });
 process.stderr.write(W + "x" + H +"-" + F + "\n");
-console.log("export default " +
-	JSON.stringify(games) +
-	";"
+console.log("\"" + W + "x" + H +"-" + F + "\":" +
+	JSON.stringify(games) + ",\n"
 );

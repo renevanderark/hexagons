@@ -1,5 +1,6 @@
 import {detectFlow} from "../api";
-import games from "../games";
+
+const games = gameMap["3x3-2"];
 
 let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state"))  : {
 	...games[0],
