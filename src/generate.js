@@ -28,5 +28,5 @@ games.sort(function(a, b) {
 	return a.difficulty - b.difficulty;
 });
 console.log(
-	"<span id=\"" + W + "x" + H +"-" + F + "\">" + JSON.stringify(games) + "</span>"
+	JSON.stringify(games)
 );

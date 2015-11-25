@@ -22,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "redux": "^3.0.4"
+    "redux": "^3.0.4",
+    "xhr": "~2.2.0"
   }
 }

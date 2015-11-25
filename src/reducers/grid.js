@@ -1,7 +1,5 @@
 import {detectFlow} from "../api";
 
-const games = JSON.parse(document.getElementById("6x6-6").innerHTML);
-
 let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {
 	...games[0],
 	levels: games.length,

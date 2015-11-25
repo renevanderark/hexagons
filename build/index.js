@@ -21282,8 +21282,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var games = JSON.parse(document.getElementById("6x6-6").innerHTML);
-
 var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, games[0], {
 	levels: games.length,
 	gameIdx: 0,
