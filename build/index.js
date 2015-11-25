@@ -20932,6 +20932,7 @@ Hexagon.propTypes = {
 	gridPiece: _react2["default"].PropTypes.object,
 	onRelease: _react2["default"].PropTypes.func,
 	onRotate: _react2["default"].PropTypes.func,
+	scale: _react2["default"].PropTypes.number,
 	tubes: _react2["default"].PropTypes.array,
 	updated: _react2["default"].PropTypes.number
 };
@@ -21202,7 +21203,7 @@ var App = (function (_React$Component) {
 					},
 					position: [_this.state.grid[k].x * 225, _this.state.grid[k].y * 260 + _this.state.grid[k].x % 2 * 130],
 					rotation: _this.state.grid[k].rotation,
-					scale: _this.state.scale,
+					scale: window.innerWidth / (_this.state.width * 225 + 75),
 					tubes: _this.state.grid[k].tubes,
 					updated: _this.state.updated });
 			});
@@ -21281,7 +21282,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var games = JSON.parse(document.getElementById("4x5-6").innerHTML);
+var games = JSON.parse(document.getElementById("6x6-6").innerHTML);
 
 var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, games[0], {
 	levels: games.length,

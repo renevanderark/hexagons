@@ -111,6 +111,7 @@ Hexagon.propTypes = {
 	gridPiece: React.PropTypes.object,
 	onRelease: React.PropTypes.func,
 	onRotate: React.PropTypes.func,
+	scale: React.PropTypes.number,
 	tubes: React.PropTypes.array,
 	updated: React.PropTypes.number
 };

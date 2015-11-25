@@ -38,7 +38,7 @@ class App extends React.Component {
 				onRotate={(degs) => store.dispatch({type: "ROTATE_GRID_PIECE", index: k, degs: degs})}
 				position={[this.state.grid[k].x * 225, (this.state.grid[k].y * 260) + ((this.state.grid[k].x % 2) * 130) ]}
 				rotation={this.state.grid[k].rotation}
-				scale={this.state.scale}
+				scale={window.innerWidth / (this.state.width * 225 + 75)}
 				tubes={this.state.grid[k].tubes}
 				updated={this.state.updated} />
 		));
