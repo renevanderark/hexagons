@@ -29,31 +29,6 @@ class App extends React.Component {
 		this.setState(store.getState());
 	}
 
-	onTouchMove(ev) {
-		if (ev.touches.length === 2) {
-			for (let i = 0; i < ev.touches.length; i++) {
-				let cur = {x: ev.touches[i].pageX, y: ev.touches[i].pageY};
-				this.touchmap.positions[i] = cur;
-			}
-			let oldD = this.touchmap.pinchDistance;
-			this.touchmap.pinchDistance = parseInt(Math.sqrt(
-				(
-					(this.touchmap.positions[0].x - this.touchmap.positions[1].x) *
-					(this.touchmap.positions[0].x - this.touchmap.positions[1].x)
-				) + (
-					(this.touchmap.positions[0].y - this.touchmap.positions[1].y) *
-					(this.touchmap.positions[0].y - this.touchmap.positions[1].y)
-				)
-			), 10);
-			this.touchmap.pinchDelta = oldD - this.touchmap.pinchDistance;
-			if (this.touchmap.pinchDelta < 100 && this.touchmap.pinchDelta > -20) {
-				store.dispatch({type: "ZOOM_BY", pinchDelta: this.touchmap.pinchDelta})
-			}
-			ev.preventDefault();
-			ev.stopPropagation();
-		}
-	}
-
 	renderGrid() {
 		return Object.keys(this.state.grid).map((k, i) => (
 			<Hexagon
@@ -88,19 +63,19 @@ class App extends React.Component {
 	}
 
 	render() {
-		let info = this.state.finished ? 
-			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} startTime={this.state.startTime} /> : 
+		let info = this.state.finished ?
+			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} startTime={this.state.startTime} /> :
 			<Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
 				{info}
-				<div onTouchMove={this.onTouchMove.bind(this)} id="canvas-wrapper" style={{
+				<div id="canvas-wrapper" style={{
 					height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 				}}>
 					<svg
-						height={(this.state.height * 260 + 130) * this.state.scale}
-						width={(this.state.width * 225 + 75) * this.state.scale}
-						viewBox={this.getViewBox()}>
+						height="100%"
+						viewBox={this.getViewBox()}
+						width="100%">
 						{this.renderGrid()}
 						{this.renderArrows("entryPoints")}
 						{this.renderArrows("exits")}

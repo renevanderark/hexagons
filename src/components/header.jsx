@@ -5,16 +5,23 @@ class Header extends React.Component {
 	constructor(props) {
 		super(props);
 
+		this.mounted = false;
 		this.state = {time: 0};
 	}
 
 	componentDidMount() {
+		this.mounted = true;
 		this.initUpdates();
 	}
-
+	componentWillUnmount() {
+		this.mounted = false;
+	}
 	initUpdates() {
 		this.setState({time: new Date().getTime()});
-		window.setTimeout(this.initUpdates.bind(this), 200);
+
+		if(this.mounted) {
+			window.setTimeout(this.initUpdates.bind(this), 200);
+		}
 	}
 
 	render() {
@@ -24,5 +31,11 @@ class Header extends React.Component {
 		</header>);
 	}
 }
+
+Header.propTypes = {
+	level: React.PropTypes.number,
+	levels: React.PropTypes.number,
+	startTime: React.PropTypes.number
+};
 
 export default Header;

@@ -20716,19 +20716,29 @@ var Header = (function (_React$Component) {
 
 		_get(Object.getPrototypeOf(Header.prototype), "constructor", this).call(this, props);
 
+		this.mounted = false;
 		this.state = { time: 0 };
 	}
 
 	_createClass(Header, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
+			this.mounted = true;
 			this.initUpdates();
+		}
+	}, {
+		key: "componentWillUnmount",
+		value: function componentWillUnmount() {
+			this.mounted = false;
 		}
 	}, {
 		key: "initUpdates",
 		value: function initUpdates() {
 			this.setState({ time: new Date().getTime() });
-			window.setTimeout(this.initUpdates.bind(this), 200);
+
+			if (this.mounted) {
+				window.setTimeout(this.initUpdates.bind(this), 200);
+			}
 		}
 	}, {
 		key: "render",
@@ -20748,6 +20758,12 @@ var Header = (function (_React$Component) {
 
 	return Header;
 })(_react2["default"].Component);
+
+Header.propTypes = {
+	level: _react2["default"].PropTypes.number,
+	levels: _react2["default"].PropTypes.number,
+	startTime: _react2["default"].PropTypes.number
+};
 
 exports["default"] = Header;
 module.exports = exports["default"];
@@ -21170,24 +21186,6 @@ var App = (function (_React$Component) {
 			this.setState(_reducersStore2["default"].getState());
 		}
 	}, {
-		key: "onTouchMove",
-		value: function onTouchMove(ev) {
-			if (ev.touches.length === 2) {
-				for (var i = 0; i < ev.touches.length; i++) {
-					var cur = { x: ev.touches[i].pageX, y: ev.touches[i].pageY };
-					this.touchmap.positions[i] = cur;
-				}
-				var oldD = this.touchmap.pinchDistance;
-				this.touchmap.pinchDistance = parseInt(Math.sqrt((this.touchmap.positions[0].x - this.touchmap.positions[1].x) * (this.touchmap.positions[0].x - this.touchmap.positions[1].x) + (this.touchmap.positions[0].y - this.touchmap.positions[1].y) * (this.touchmap.positions[0].y - this.touchmap.positions[1].y)), 10);
-				this.touchmap.pinchDelta = oldD - this.touchmap.pinchDistance;
-				if (this.touchmap.pinchDelta < 100 && this.touchmap.pinchDelta > -20) {
-					_reducersStore2["default"].dispatch({ type: "ZOOM_BY", pinchDelta: this.touchmap.pinchDelta });
-				}
-				ev.preventDefault();
-				ev.stopPropagation();
-			}
-		}
-	}, {
 		key: "renderGrid",
 		value: function renderGrid() {
 			var _this = this;
@@ -21243,15 +21241,15 @@ var App = (function (_React$Component) {
 				info,
 				_react2["default"].createElement(
 					"div",
-					{ onTouchMove: this.onTouchMove.bind(this), id: "canvas-wrapper", style: {
+					{ id: "canvas-wrapper", style: {
 							height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 						} },
 					_react2["default"].createElement(
 						"svg",
 						{
-							height: (this.state.height * 260 + 130) * this.state.scale,
-							width: (this.state.width * 225 + 75) * this.state.scale,
-							viewBox: this.getViewBox() },
+							height: "100%",
+							viewBox: this.getViewBox(),
+							width: "100%" },
 						this.renderGrid(),
 						this.renderArrows("entryPoints"),
 						this.renderArrows("exits")
@@ -21283,7 +21281,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var games = gameMap["3x3-2"];
+var games = JSON.parse(document.getElementById("4x5-6").innerHTML);
 
 var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, games[0], {
 	levels: games.length,
@@ -21320,8 +21318,6 @@ exports["default"] = function (state, action) {
 			newState.finished = finished;
 			newState.scores = scores;
 			return newState;
-		case "ZOOM_BY":
-			return _extends({}, state, { scale: state.scale * (action.pinchDelta < 0 ? 1.085 : 0.985) });
 		case "NEXT_GAME":
 			return _extends({}, games[state.gameIdx + 1], {
 				gameIdx: state.gameIdx + 1,

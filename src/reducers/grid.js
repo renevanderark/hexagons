@@ -1,8 +1,8 @@
 import {detectFlow} from "../api";
 
-const games = gameMap["3x3-2"];
+const games = JSON.parse(document.getElementById("4x5-6").innerHTML);
 
-let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state"))  : {
+let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {
 	...games[0],
 	levels: games.length,
 	gameIdx: 0,
@@ -27,8 +27,6 @@ export default function(state = initialState, action) {
 			newState.finished = finished;
 			newState.scores = scores;
 			return newState;
-		case "ZOOM_BY":
-			return {...state, scale: state.scale * (action.pinchDelta < 0 ? 1.085 : 0.985)};
 		case "NEXT_GAME":
 			return {
 				...games[state.gameIdx + 1],
