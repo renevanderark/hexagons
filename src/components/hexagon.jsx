@@ -29,7 +29,20 @@ const getEventPos = (ev) => {
 		clientX: document.getElementById("canvas-wrapper").scrollLeft - (document.getElementById("canvas-wrapper").clientLeft || 0) + ev.clientX,
 		clientY: document.getElementById("canvas-wrapper").scrollTop - (document.getElementById("canvas-wrapper").clientTop || 0) + ev.clientY
 	};
-}
+};
+
+let listeners = [];
+
+const batchedAnimFrame = () => {
+
+	for(let i in listeners) {
+		listeners[i]();
+	}
+
+	window.setTimeout(batchedAnimFrame, 5);
+};
+
+batchedAnimFrame();
 
 class Hexagon extends React.Component {
 	constructor(props) {
@@ -39,12 +52,11 @@ class Hexagon extends React.Component {
 		this.center = {x: position[0] + 150, y: position[1] + 150};
 		this.nextRotation = this.props.gridPiece.rotation;
 
-		this.animationFrameListener = this.onAnimationFrame.bind(this);
 	}
 
 	componentDidMount() {
 		React.initializeTouchEvents(true);
-		window.requestAnimationFrame(this.animationFrameListener);
+		listeners.push(this.onAnimationFrame.bind(this));
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -64,7 +76,6 @@ class Hexagon extends React.Component {
 		} else if(this.nextRotation > this.props.gridPiece.rotation) {
 			this.props.onRotate(this.props.gridPiece.rotation + 10);
 		}
-		window.setTimeout(this.animationFrameListener, 5);
 	}
 
 	onTouchStart(ev) {
@@ -83,7 +94,7 @@ class Hexagon extends React.Component {
 
 	onTouchEnd() {
 		if(this.nextX === this.initX && this.nextY === this.initY) {
-			this.nextRotation = this.initX > this.center.x * this.props.scale ? // TODO: recompute this.center.x based on real image width when zoomed
+			this.nextRotation = this.initX > this.center.x * this.props.scale ?
 				this.nextRotation + 60 :
 				this.nextRotation - 60;
 		}

@@ -20826,6 +20826,19 @@ var getEventPos = function getEventPos(ev) {
 	};
 };
 
+var listeners = [];
+
+var batchedAnimFrame = function batchedAnimFrame() {
+
+	for (var i in listeners) {
+		listeners[i]();
+	}
+
+	window.setTimeout(batchedAnimFrame, 5);
+};
+
+batchedAnimFrame();
+
 var Hexagon = (function (_React$Component) {
 	_inherits(Hexagon, _React$Component);
 
@@ -20837,15 +20850,13 @@ var Hexagon = (function (_React$Component) {
 		var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
 		this.center = { x: position[0] + 150, y: position[1] + 150 };
 		this.nextRotation = this.props.gridPiece.rotation;
-
-		this.animationFrameListener = this.onAnimationFrame.bind(this);
 	}
 
 	_createClass(Hexagon, [{
 		key: "componentDidMount",
 		value: function componentDidMount() {
 			_react2["default"].initializeTouchEvents(true);
-			window.requestAnimationFrame(this.animationFrameListener);
+			listeners.push(this.onAnimationFrame.bind(this));
 		}
 	}, {
 		key: "componentWillReceiveProps",
@@ -20868,7 +20879,6 @@ var Hexagon = (function (_React$Component) {
 			} else if (this.nextRotation > this.props.gridPiece.rotation) {
 				this.props.onRotate(this.props.gridPiece.rotation + 10);
 			}
-			window.setTimeout(this.animationFrameListener, 5);
 		}
 	}, {
 		key: "onTouchStart",
@@ -20898,8 +20908,7 @@ var Hexagon = (function (_React$Component) {
 		key: "onTouchEnd",
 		value: function onTouchEnd() {
 			if (this.nextX === this.initX && this.nextY === this.initY) {
-				this.nextRotation = this.initX > this.center.x * this.props.scale ? // TODO: recompute this.center.x based on real image width when zoomed
-				this.nextRotation + 60 : this.nextRotation - 60;
+				this.nextRotation = this.initX > this.center.x * this.props.scale ? this.nextRotation + 60 : this.nextRotation - 60;
 			}
 		}
 	}, {
