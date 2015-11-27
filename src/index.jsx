@@ -30,6 +30,7 @@ class App extends React.Component {
 	}
 
 	renderGrid() {
+		if(!this.state.grid) { return null; }
 		return Object.keys(this.state.grid).map((k, i) => (
 			<Hexagon
 				gridPiece={this.state.grid[k]}
@@ -45,6 +46,7 @@ class App extends React.Component {
 	}
 
 	renderArrows(type) {
+		if(!this.state.grid) { return null; }
 		return this.state[type].map((e, i) => (
 			<Arrow gridPiece={this.state.grid[e[0]]} hasFlow={i+1} idx={e[1]} key={i} type={type} />
 		));
@@ -62,13 +64,23 @@ class App extends React.Component {
 		return `0 0 ${this.state.width * 225 + 75} ${this.state.height * 260 + 130}`;
 	}
 
+	solve() {
+		store.dispatch({type: "SOLVE"});
+	}
+
 	render() {
-		let info = this.state.finished ?
+		if(this.state.grid === null) {
+			location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
+		}
+		let results = this.state.finished ?
 			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} startTime={this.state.startTime} /> :
-			<Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
+			null;
+		let header = <Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
-				{info}
+				<button onClick={this.solve.bind(this)} style={{float: "right"}}>solve</button>
+				{header}
+				{results}
 				<div id="canvas-wrapper" style={{
 					height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 				}}>

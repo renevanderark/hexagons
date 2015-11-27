@@ -2,11 +2,11 @@
 
 for i in 3 4 5 6
 do
-	for x in 5 6
+	for x in 3 4
 	do
-		for y in 6
+		for y in 5
 		do
-			node src/generate.js $i $x $y > games-${x}x$y-$i.tmp &
+			node src/generate.js $i $x $y &
 		done
 	done
 done

@@ -1,6 +1,7 @@
 #!/usr/bin/node
 require("babel/register");
 var api = require("./api");
+var fs = require("fs");
 
 var F = parseInt(process.argv[2]);
 var W = parseInt(process.argv[3]);
@@ -27,6 +28,10 @@ games = games.filter(function(g, j) { return j < 1000; });
 games.sort(function(a, b) {
 	return a.difficulty - b.difficulty;
 });
-console.log(
-	JSON.stringify(games)
-);
+
+for(var i in games) {
+	fs.writeFile(key + "." + i + ".html", "<html><meta name='viewport' content='initial-scale=1.0, user-scalable=no' /><link rel='stylesheet' type='text/css' href='style.css' /><body><h1>Fluxagon loading!</h1></body><script type='text/javascript'>" +
+		"var game = " + JSON.stringify(games[i]) + ";" +
+		"</script><script src='index.js'></script></html>"
+	);
+}

@@ -21200,6 +21200,9 @@ var App = (function (_React$Component) {
 		value: function renderGrid() {
 			var _this = this;
 
+			if (!this.state.grid) {
+				return null;
+			}
 			return Object.keys(this.state.grid).map(function (k, i) {
 				return _react2["default"].createElement(_componentsHexagon2["default"], {
 					gridPiece: _this.state.grid[k],
@@ -21222,6 +21225,9 @@ var App = (function (_React$Component) {
 		value: function renderArrows(type) {
 			var _this2 = this;
 
+			if (!this.state.grid) {
+				return null;
+			}
 			return this.state[type].map(function (e, i) {
 				return _react2["default"].createElement(_componentsArrow2["default"], { gridPiece: _this2.state.grid[e[0]], hasFlow: i + 1, idx: e[1], key: i, type: type });
 			});
@@ -21242,13 +21248,28 @@ var App = (function (_React$Component) {
 			return "0 0 " + (this.state.width * 225 + 75) + " " + (this.state.height * 260 + 130);
 		}
 	}, {
+		key: "solve",
+		value: function solve() {
+			_reducersStore2["default"].dispatch({ type: "SOLVE" });
+		}
+	}, {
 		key: "render",
 		value: function render() {
-			var info = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), onReset: this.onReset.bind(this), scores: this.state.scores, startTime: this.state.startTime }) : _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels, startTime: this.state.startTime });
+			if (this.state.grid === null) {
+				location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
+			}
+			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), onReset: this.onReset.bind(this), scores: this.state.scores, startTime: this.state.startTime }) : null;
+			var header = _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels, startTime: this.state.startTime });
 			return _react2["default"].createElement(
 				"div",
 				{ style: { fontFamily: "sans-serif" } },
-				info,
+				_react2["default"].createElement(
+					"button",
+					{ onClick: this.solve.bind(this), style: { float: "right" } },
+					"solve"
+				),
+				header,
+				results,
 				_react2["default"].createElement(
 					"div",
 					{ id: "canvas-wrapper", style: {
@@ -21291,8 +21312,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, games[0], {
-	levels: games.length,
+var levelCap = 10;
+var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, game, {
+	levels: levelCap,
 	gameIdx: 0,
 	updated: 0,
 	scores: [],
@@ -21306,15 +21328,20 @@ if (!initialState.scale) {
 if (!initialState.startTime) {
 	initialState.startTime = new Date().getTime();
 }
+if (!initialState.grid) {
+	initialState = _extends({}, initialState, game);
+}
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
 
-	var gridPiece = _extends({}, state.grid[action.index], { rotation: action.degs });
+	var gridPiece = undefined;
 	switch (action.type) {
 		case "ROTATE_GRID_PIECE":
+			gridPiece = _extends({}, state.grid[action.index], { rotation: action.degs });
 			return _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)) });
 		case "RELEASE_GRID_PIECE":
+			gridPiece = _extends({}, state.grid[action.index], { rotation: action.degs });
 			var newState = _extends({}, state, { grid: _extends({}, state.grid, _defineProperty({}, action.index, gridPiece)), updated: new Date().getTime() });
 
 			var _detectFlow = (0, _api.detectFlow)(newState.grid, state.numFlows, state.entryPoints, state.exits),
@@ -21326,23 +21353,32 @@ exports["default"] = function (state, action) {
 			newState.finished = finished;
 			newState.scores = scores;
 			return newState;
+		case "SOLVE":
+			return _extends({}, state, {
+				finished: true
+			});
+
 		case "NEXT_GAME":
-			return _extends({}, games[state.gameIdx + 1], {
+			return {
+				grid: null,
 				gameIdx: state.gameIdx + 1,
 				updated: 0, finished: false,
-				levels: games.length,
+				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()
-			});
+			};
+
 		case "RESET":
-			return _extends({}, games[0], {
+			return {
+				grid: null,
 				gameIdx: 0,
 				updated: 0,
 				finished: false,
-				levels: games.length,
+				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()
-			});
+			};
+
 		default:
 			return state;
 	}
