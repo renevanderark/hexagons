@@ -11,8 +11,8 @@ const fills = [
 
 
 class Results extends React.Component {
-	
 	render() {
+		let nextButton = this.props.hasNextLevel ? <button onClick={this.props.onNextGame}>Next level</button> : null;
 		return (<div style={{position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)"}}>
 			<div style={{
 				position: "fixed",
@@ -42,7 +42,7 @@ class Results extends React.Component {
 						</span>
 					</li>
 				</ul>
-				<button onClick={this.props.onNextGame}>Next level</button>
+				{nextButton}
 				<button onClick={this.props.onReset}>Back</button>
 			</div>
 		</div>);
@@ -50,7 +50,11 @@ class Results extends React.Component {
 }
 
 Results.propTypes = {
-	onNextGame: React.PropTypes.func
+	hasNextLevel: React.PropTypes.bool,
+	onNextGame: React.PropTypes.func,
+	onReset: React.PropTypes.func,
+	scores: React.PropTypes.array,
+	startTime: React.PropTypes.number
 };
 
 export default Results;

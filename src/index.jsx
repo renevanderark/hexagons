@@ -73,7 +73,12 @@ class App extends React.Component {
 			location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
 		}
 		let results = this.state.finished ?
-			<Results onNextGame={this.onNextGame.bind(this)} onReset={this.onReset.bind(this)} scores={this.state.scores} startTime={this.state.startTime} /> :
+			(<Results
+				hasNextLevel={this.state.gameIdx + 1 < this.state.levels}
+				onNextGame={this.onNextGame.bind(this)}
+				onReset={this.onReset.bind(this)}
+				scores={this.state.scores}
+				startTime={this.state.startTime} />) :
 			null;
 		let header = <Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (

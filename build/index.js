@@ -20988,6 +20988,11 @@ var Results = (function (_React$Component) {
 	_createClass(Results, [{
 		key: "render",
 		value: function render() {
+			var nextButton = this.props.hasNextLevel ? _react2["default"].createElement(
+				"button",
+				{ onClick: this.props.onNextGame },
+				"Next level"
+			) : null;
 			return _react2["default"].createElement(
 				"div",
 				{ style: { position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
@@ -21044,11 +21049,7 @@ var Results = (function (_React$Component) {
 							)
 						)
 					),
-					_react2["default"].createElement(
-						"button",
-						{ onClick: this.props.onNextGame },
-						"Next level"
-					),
+					nextButton,
 					_react2["default"].createElement(
 						"button",
 						{ onClick: this.props.onReset },
@@ -21063,7 +21064,11 @@ var Results = (function (_React$Component) {
 })(_react2["default"].Component);
 
 Results.propTypes = {
-	onNextGame: _react2["default"].PropTypes.func
+	hasNextLevel: _react2["default"].PropTypes.bool,
+	onNextGame: _react2["default"].PropTypes.func,
+	onReset: _react2["default"].PropTypes.func,
+	scores: _react2["default"].PropTypes.array,
+	startTime: _react2["default"].PropTypes.number
 };
 
 exports["default"] = Results;
@@ -21258,7 +21263,12 @@ var App = (function (_React$Component) {
 			if (this.state.grid === null) {
 				location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
 			}
-			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], { onNextGame: this.onNextGame.bind(this), onReset: this.onReset.bind(this), scores: this.state.scores, startTime: this.state.startTime }) : null;
+			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], {
+				hasNextLevel: this.state.gameIdx + 1 < this.state.levels,
+				onNextGame: this.onNextGame.bind(this),
+				onReset: this.onReset.bind(this),
+				scores: this.state.scores,
+				startTime: this.state.startTime }) : null;
 			var header = _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels, startTime: this.state.startTime });
 			return _react2["default"].createElement(
 				"div",
@@ -21372,8 +21382,7 @@ exports["default"] = function (state, action) {
 			return {
 				grid: null,
 				gameIdx: 0,
-				updated: 0,
-				finished: false,
+				updated: 0, finished: false,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()

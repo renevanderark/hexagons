@@ -48,8 +48,7 @@ export default function(state = initialState, action) {
 			return {
 				grid: null,
 				gameIdx: 0,
-				updated: 0,
-				finished: false,
+				updated: 0, finished: false,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()
