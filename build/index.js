@@ -21261,7 +21261,7 @@ var App = (function (_React$Component) {
 		key: "render",
 		value: function render() {
 			if (this.state.grid === null) {
-				location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
+				location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html";
 			}
 			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], {
 				hasNextLevel: this.state.gameIdx + 1 < this.state.levels,
@@ -21275,8 +21275,13 @@ var App = (function (_React$Component) {
 				{ style: { fontFamily: "sans-serif" } },
 				_react2["default"].createElement(
 					"button",
+					{ onClick: this.onReset.bind(this), style: { float: "left" } },
+					"back"
+				),
+				_react2["default"].createElement(
+					"button",
 					{ onClick: this.solve.bind(this), style: { float: "right" } },
-					"solve"
+					"skip"
 				),
 				header,
 				results,
@@ -21307,6 +21312,7 @@ _react2["default"].render(_react2["default"].createElement(App, null), document.
 
 window.addEventListener("unload", function () {
 	localStorage.setItem("saved-state", JSON.stringify(_reducersStore2["default"].getState()));
+	localStorage.setItem("pause-time", new Date().getTime());
 });
 
 },{"./components/arrow":167,"./components/header":168,"./components/hexagon":169,"./components/results":170,"./reducers/store":174,"react":155}],173:[function(_dereq_,module,exports){
@@ -21329,6 +21335,7 @@ var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	updated: 0,
 	scores: [],
 	scale: 1.0,
+	levelPack: null,
 	startTime: new Date().getTime()
 });
 
@@ -21341,6 +21348,10 @@ if (!initialState.startTime) {
 if (!initialState.grid) {
 	initialState = _extends({}, initialState, game);
 }
+if (!initialState.levelPack) {
+	initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") });
+}
+console.log(initialState.levelPack);
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
@@ -21372,7 +21383,7 @@ exports["default"] = function (state, action) {
 			return {
 				grid: null,
 				gameIdx: state.gameIdx + 1,
-				updated: 0, finished: false,
+				updated: 0, finished: false, levelPack: state.levelPack,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()
@@ -21382,7 +21393,7 @@ exports["default"] = function (state, action) {
 			return {
 				grid: null,
 				gameIdx: 0,
-				updated: 0, finished: false,
+				updated: 0, finished: false, levelPack: null,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()

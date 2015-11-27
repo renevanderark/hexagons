@@ -8,12 +8,16 @@ let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 	updated: 0,
 	scores: [],
 	scale: 1.0,
+	levelPack: null,
 	startTime: new Date().getTime()
 };
 
 if(!initialState.scale) { initialState.scale = 1.0; }
 if(!initialState.startTime) { initialState.startTime = new Date().getTime(); }
 if(!initialState.grid) { initialState = {...initialState, ...game}; }
+if(!initialState.levelPack) { initialState = {...initialState, levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") }; }
+console.log(initialState.levelPack);
+
 export default function(state = initialState, action) {
 	let gridPiece;
 	switch(action.type) {
@@ -38,7 +42,7 @@ export default function(state = initialState, action) {
 			return {
 				grid: null,
 				gameIdx: state.gameIdx + 1,
-				updated: 0, finished: false,
+				updated: 0, finished: false, levelPack: state.levelPack,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()
@@ -48,7 +52,7 @@ export default function(state = initialState, action) {
 			return {
 				grid: null,
 				gameIdx: 0,
-				updated: 0, finished: false,
+				updated: 0, finished: false, levelPack: null,
 				levels: levelCap,
 				scale: state.scale,
 				startTime: new Date().getTime()

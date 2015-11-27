@@ -19826,6 +19826,12 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
+
+if (state.levelPack) {
+	location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
+}
+
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
 
@@ -19839,9 +19845,18 @@ var Menu = (function (_React$Component) {
 		key: "render",
 		value: function render() {
 			return _react2["default"].createElement(
-				"a",
-				{ href: "3x4-3.0.html" },
-				"play"
+				"div",
+				null,
+				_react2["default"].createElement(
+					"a",
+					{ href: "3x4-3.0.html", style: { display: "block" } },
+					"3x4-3"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ href: "4x4-3.0.html", style: { display: "block" } },
+					"4x4-3"
+				)
 			);
 		}
 	}]);

@@ -70,7 +70,7 @@ class App extends React.Component {
 
 	render() {
 		if(this.state.grid === null) {
-			location.href = this.state.gameIdx > 0 ? "3x4-3." + this.state.gameIdx + ".html" : "index.html";
+			location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html";
 		}
 		let results = this.state.finished ?
 			(<Results
@@ -83,7 +83,8 @@ class App extends React.Component {
 		let header = <Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
-				<button onClick={this.solve.bind(this)} style={{float: "right"}}>solve</button>
+				<button onClick={this.onReset.bind(this)} style={{float: "left"}}>back</button>
+				<button onClick={this.solve.bind(this)} style={{float: "right"}}>skip</button>
 				{header}
 				{results}
 				<div id="canvas-wrapper" style={{
@@ -106,4 +107,5 @@ React.render(<App />, document.body);
 
 window.addEventListener("unload", () => {
 	localStorage.setItem("saved-state", JSON.stringify(store.getState()));
+	localStorage.setItem("pause-time", new Date().getTime());
 });
