@@ -1,45 +1,5 @@
 import React from "react";
 
-let state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
-
-function actuateLink(link)
-{
-   var allowDefaultAction = true;
-      
-   if (link.click)
-   {
-      link.click();
-      return;
-   }
-   else if (document.createEvent)
-   {
-      var e = document.createEvent('MouseEvents');
-      e.initEvent(
-         'click'     // event type
-         ,true      // can bubble?
-         ,true      // cancelable?
-      );
-      allowDefaultAction = link.dispatchEvent(e);           
-   }
-         
-   if (allowDefaultAction)       
-   {
-      var f = document.createElement('form');
-      f.action = link.href;
-      document.body.appendChild(f);
-      f.submit();
-   }
-}
-
-if(state.levelPack) {
-	console.log("HELLO?");
-	console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
-	document.getElementById("lnk").setAttribute("href", state.levelPack + "." + (state.gameIdx || 0) + ".html");
-	actuateLink(document.getElementById("lnk"))
-}
-
-
-
 class Menu extends React.Component {
 
 	renderHex() {
