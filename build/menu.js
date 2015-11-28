@@ -19830,41 +19830,147 @@ var state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getIte
 
 if (state.levelPack) {
 	location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
+} else {
+	(function () {
+		var Menu = (function (_React$Component) {
+			_inherits(Menu, _React$Component);
+
+			function Menu() {
+				_classCallCheck(this, Menu);
+
+				_get(Object.getPrototypeOf(Menu.prototype), "constructor", this).apply(this, arguments);
+			}
+
+			_createClass(Menu, [{
+				key: "renderHex",
+				value: function renderHex() {
+					return _react2["default"].createElement(
+						"svg",
+						{ viewBox: "0 0 300 260", height: "60%", style: { position: "relative", top: "4px" } },
+						_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#DDD", strokeWidth: "1" })
+					);
+				}
+			}, {
+				key: "render",
+				value: function render() {
+					return _react2["default"].createElement(
+						"div",
+						{ id: "menu" },
+						_react2["default"].createElement(
+							"h1",
+							null,
+							"Fluxagon"
+						),
+						_react2["default"].createElement(
+							"div",
+							{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x4-3.0.html" },
+								this.renderHex(),
+								" 3x4 - 3"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x4-4.0.html" },
+								this.renderHex(),
+								" 3x4 - 4"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x4-5.0.html" },
+								this.renderHex(),
+								" 3x4 - 5"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x4-6.0.html" },
+								this.renderHex(),
+								" 3x4 - 6"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x5-3.0.html" },
+								this.renderHex(),
+								" 3x5 - 3"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x5-4.0.html" },
+								this.renderHex(),
+								" 3x5 - 4"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x5-5.0.html" },
+								this.renderHex(),
+								" 3x5 - 5"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "3x5-6.0.html" },
+								this.renderHex(),
+								" 3x5 - 6"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x4-3.0.html" },
+								this.renderHex(),
+								" 4x4 - 3"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x4-4.0.html" },
+								this.renderHex(),
+								" 4x4 - 4"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x4-5.0.html" },
+								this.renderHex(),
+								" 4x4 - 5"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x4-6.0.html" },
+								this.renderHex(),
+								" 4x4 - 6"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x5-3.0.html" },
+								this.renderHex(),
+								" 4x5 - 3"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x5-4.0.html" },
+								this.renderHex(),
+								" 4x5 - 4"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x5-5.0.html" },
+								this.renderHex(),
+								" 4x5 - 5"
+							),
+							_react2["default"].createElement(
+								"a",
+								{ href: "4x5-6.0.html" },
+								this.renderHex(),
+								" 4x5 - 6"
+							)
+						)
+					);
+				}
+			}]);
+
+			return Menu;
+		})(_react2["default"].Component);
+
+		_react2["default"].render(_react2["default"].createElement(Menu, null), document.body);
+	})();
 }
-
-var Menu = (function (_React$Component) {
-	_inherits(Menu, _React$Component);
-
-	function Menu() {
-		_classCallCheck(this, Menu);
-
-		_get(Object.getPrototypeOf(Menu.prototype), "constructor", this).apply(this, arguments);
-	}
-
-	_createClass(Menu, [{
-		key: "render",
-		value: function render() {
-			return _react2["default"].createElement(
-				"div",
-				null,
-				_react2["default"].createElement(
-					"a",
-					{ href: "3x4-3.0.html", style: { display: "block" } },
-					"3x4-3"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ href: "4x4-3.0.html", style: { display: "block" } },
-					"4x4-3"
-				)
-			);
-		}
-	}]);
-
-	return Menu;
-})(_react2["default"].Component);
-
-_react2["default"].render(_react2["default"].createElement(Menu, null), document.body);
 
 },{"react":155}]},{},[157])(157)
 });
