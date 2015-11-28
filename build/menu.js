@@ -19828,6 +19828,9 @@ var _react2 = _interopRequireDefault(_react);
 
 var state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
 
+console.log("A", state);
+console.log("B", state.levelPack, state.gameIdx);
+console.log("C", location.href);
 if (state.levelPack) {
 	location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
 } else {
