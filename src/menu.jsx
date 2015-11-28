@@ -2,11 +2,7 @@ import React from "react";
 
 let state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
 
-if(state.levelPack) {
-	console.log("HELLO?");
-	console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
-	location.href = "file:///android_asset/" + state.levelPack + "." + (state.gameIdx || 0) + ".html";
-}
+
 class Menu extends React.Component {
 
 	renderHex() {
@@ -48,3 +44,11 @@ class Menu extends React.Component {
 }
 
 React.render(<Menu />, document.body);
+
+window.setTimeout(() => {
+	if(state.levelPack) {
+		console.log("HELLO?");
+		console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
+		location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
+	}
+}, 500);

@@ -19617,12 +19617,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
 
-if (state.levelPack) {
-	console.log("HELLO?");
-	console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
-	location.href = "file:///android_asset/" + state.levelPack + "." + (state.gameIdx || 0) + ".html";
-}
-
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
 
@@ -19760,6 +19754,14 @@ var Menu = (function (_React$Component) {
 })(_react2["default"].Component);
 
 _react2["default"].render(_react2["default"].createElement(Menu, null), document.body);
+
+window.setTimeout(function () {
+	if (state.levelPack) {
+		console.log("HELLO?");
+		console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
+		location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
+	}
+}, 500);
 
 },{"react":155}]},{},[156])(156)
 });
