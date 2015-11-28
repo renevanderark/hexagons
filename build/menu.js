@@ -19642,6 +19642,8 @@ var Menu = (function (_React$Component) {
 				console.log("HELLO?");
 				console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
 				document.location = state.levelPack + "." + (state.gameIdx || 0) + ".html";
+				console.log(document.location);
+				console.log(window.location.href);
 			}
 			return _react2["default"].createElement(
 				"div",
