@@ -2,6 +2,11 @@ import React from "react";
 
 let state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
 
+if(state.levelPack) {
+	console.log("HELLO?");
+	console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
+	location.href = "file:///android_asset/" + state.levelPack + "." + (state.gameIdx || 0) + ".html";
+}
 class Menu extends React.Component {
 
 	renderHex() {
@@ -13,13 +18,6 @@ class Menu extends React.Component {
 	}
 
 	render() {
-		if(state.levelPack) {
-			console.log("HELLO?");
-			console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
-			document.location = state.levelPack + "." + (state.gameIdx || 0) + ".html";
-			console.log(document.location);
-			console.log(window.location.href);
-		}
 		return (
 			<div id="menu">
 				<h1>Fluxagon</h1>
