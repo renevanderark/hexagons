@@ -2,9 +2,6 @@ import React from "react";
 
 let state = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {};
 
-console.log(state);
-console.log(state.levelPack + state.gameIdx);
-console.log(location.href);
 class Menu extends React.Component {
 
 	renderHex() {
@@ -17,6 +14,8 @@ class Menu extends React.Component {
 
 	render() {
 		if(state.levelPack) {
+			console.log("HELLO?");
+			console.log(state.levelPack + "." + (state.gameIdx || 0) + ".html");
 			location.href = state.levelPack + "." + (state.gameIdx || 0) + ".html";
 		}
 		return (

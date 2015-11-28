@@ -5,7 +5,7 @@
   "main": "build/index.js",
   "scripts": {
     "start": "scripts/server.js",
-    "watch": "scripts/watch.sh"
+    "watch": "NODE_ENV=production scripts/watch.sh"
   },
   "devDependencies": {
     "babel": "^5.8.29",
