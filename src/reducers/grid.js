@@ -1,10 +1,9 @@
 import {detectFlow} from "../api";
 
-const levelCap = 10;
+const levelCap = 100;
 let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {
 	...game,
 	levels: levelCap,
-	gameIdx: 0,
 	updated: 0,
 	scores: [],
 	scale: 1.0,
@@ -16,7 +15,7 @@ if(!initialState.scale) { initialState.scale = 1.0; }
 if(!initialState.startTime) { initialState.startTime = new Date().getTime(); }
 if(!initialState.grid) { initialState = {...initialState, ...game}; }
 if(!initialState.levelPack) { initialState = {...initialState, levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") }; }
-console.log(initialState.levelPack);
+initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 
 export default function(state = initialState, action) {
 	let gridPiece;

@@ -19615,16 +19615,41 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var levelCap = 100;
+
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
 
-	function Menu() {
+	function Menu(props) {
 		_classCallCheck(this, Menu);
 
-		_get(Object.getPrototypeOf(Menu.prototype), "constructor", this).apply(this, arguments);
+		_get(Object.getPrototypeOf(Menu.prototype), "constructor", this).call(this, props);
+
+		this.state = {
+			levelPack: null
+		};
 	}
 
 	_createClass(Menu, [{
+		key: "renderLevels",
+		value: function renderLevels() {
+			var levels = [];
+			for (var i = 0; i < levelCap; i++) {
+				levels.push(_react2["default"].createElement(
+					"a",
+					{ href: this.state.levelPack + "." + i + ".html", key: i },
+					"Level ",
+					i + 1
+				));
+			}
+
+			return _react2["default"].createElement(
+				"div",
+				{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
+				levels
+			);
+		}
+	}, {
 		key: "renderHex",
 		value: function renderHex() {
 			return _react2["default"].createElement(
@@ -19634,8 +19659,118 @@ var Menu = (function (_React$Component) {
 			);
 		}
 	}, {
+		key: "setLevelPack",
+		value: function setLevelPack(levelPack) {
+			this.setState({ levelPack: levelPack });
+		}
+	}, {
+		key: "renderLevelPacks",
+		value: function renderLevelPacks() {
+			return _react2["default"].createElement(
+				"div",
+				{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x4-3") },
+					this.renderHex(),
+					" 3x4 - 3"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x4-4") },
+					this.renderHex(),
+					" 3x4 - 4"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x4-5") },
+					this.renderHex(),
+					" 3x4 - 5"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x4-6") },
+					this.renderHex(),
+					" 3x4 - 6"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x5-3") },
+					this.renderHex(),
+					" 3x5 - 3"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x5-4") },
+					this.renderHex(),
+					" 3x5 - 4"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x5-5") },
+					this.renderHex(),
+					" 3x5 - 5"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "3x5-6") },
+					this.renderHex(),
+					" 3x5 - 6"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x4-3") },
+					this.renderHex(),
+					" 4x4 - 3"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x4-4") },
+					this.renderHex(),
+					" 4x4 - 4"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x4-5") },
+					this.renderHex(),
+					" 4x4 - 5"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x4-6") },
+					this.renderHex(),
+					" 4x4 - 6"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x5-3") },
+					this.renderHex(),
+					" 4x5 - 3"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x5-4") },
+					this.renderHex(),
+					" 4x5 - 4"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x5-5") },
+					this.renderHex(),
+					" 4x5 - 5"
+				),
+				_react2["default"].createElement(
+					"a",
+					{ onClick: this.setLevelPack.bind(this, "4x5-6") },
+					this.renderHex(),
+					" 4x5 - 6"
+				)
+			);
+		}
+	}, {
 		key: "render",
 		value: function render() {
+			var content = this.state.levelPack ? this.renderLevels() : this.renderLevelPacks();
 			return _react2["default"].createElement(
 				"div",
 				{ id: "menu" },
@@ -19644,106 +19779,7 @@ var Menu = (function (_React$Component) {
 					null,
 					"Fluxagon"
 				),
-				_react2["default"].createElement(
-					"div",
-					{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x4-3.0.html" },
-						this.renderHex(),
-						" 3x4 - 3"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x4-4.0.html" },
-						this.renderHex(),
-						" 3x4 - 4"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x4-5.0.html" },
-						this.renderHex(),
-						" 3x4 - 5"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x4-6.0.html" },
-						this.renderHex(),
-						" 3x4 - 6"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x5-3.0.html" },
-						this.renderHex(),
-						" 3x5 - 3"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x5-4.0.html" },
-						this.renderHex(),
-						" 3x5 - 4"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x5-5.0.html" },
-						this.renderHex(),
-						" 3x5 - 5"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "3x5-6.0.html" },
-						this.renderHex(),
-						" 3x5 - 6"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x4-3.0.html" },
-						this.renderHex(),
-						" 4x4 - 3"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x4-4.0.html" },
-						this.renderHex(),
-						" 4x4 - 4"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x4-5.0.html" },
-						this.renderHex(),
-						" 4x4 - 5"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x4-6.0.html" },
-						this.renderHex(),
-						" 4x4 - 6"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x5-3.0.html" },
-						this.renderHex(),
-						" 4x5 - 3"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x5-4.0.html" },
-						this.renderHex(),
-						" 4x5 - 4"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x5-5.0.html" },
-						this.renderHex(),
-						" 4x5 - 5"
-					),
-					_react2["default"].createElement(
-						"a",
-						{ href: "4x5-6.0.html" },
-						this.renderHex(),
-						" 4x5 - 6"
-					)
-				)
+				content
 			);
 		}
 	}]);

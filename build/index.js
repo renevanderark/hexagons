@@ -21210,10 +21210,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var levelCap = 10;
+var levelCap = 100;
 var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, game, {
 	levels: levelCap,
-	gameIdx: 0,
 	updated: 0,
 	scores: [],
 	scale: 1.0,
@@ -21233,7 +21232,7 @@ if (!initialState.grid) {
 if (!initialState.levelPack) {
 	initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") });
 }
-console.log(initialState.levelPack);
+initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
