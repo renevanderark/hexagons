@@ -12,9 +12,8 @@ let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 };
 
 if(!initialState.scale) { initialState.scale = 1.0; }
-if(!initialState.grid) { initialState = {...initialState, ...game}; }
-if(!initialState.levelPack) { initialState = {...initialState, levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") }; }
 
+initialState = {...initialState, levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") };
 initialState.startTime = new Date().getTime();
 initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 initialState = {...initialState, ...game};
