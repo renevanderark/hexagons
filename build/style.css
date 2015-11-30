@@ -75,6 +75,16 @@ a {
 	margin-left: 2.5%;
 }
 
+button {
+	color: #fff;
+	font-size: 2em;
+	font-weight: bold;
+	text-decoration: none;
+	border-radius: 5px;
+	text-align: center;
+	background-color: #aaf;
+}
+
 h1 {
 	font-size: 3em;
 	color: #88a;

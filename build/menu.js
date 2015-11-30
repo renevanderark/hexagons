@@ -19618,6 +19618,12 @@ var _react2 = _interopRequireDefault(_react);
 var levelCap = parseInt(location.href.replace(/.*\?levelCap=([0-9]+)/, "$1")) || 100;
 localStorage.setItem("level-cap", levelCap);
 
+var AndroidInterface = AndroidInterface || {
+	shareMe: function shareMe() {
+		alert("stub shareMe");
+	}
+};
+
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
 
@@ -19777,8 +19783,21 @@ var Menu = (function (_React$Component) {
 				{ id: "menu" },
 				_react2["default"].createElement(
 					"h1",
-					{ style: { position: "fixed", top: 0, display: "block", width: "100%", backgroundColor: "#fff", zIndex: 1000 } },
+					{ style: { position: "fixed", top: 0, paddingLeft: "20px", display: "block", width: "100%", backgroundColor: "#fff", zIndex: 1000, textAlign: "left" } },
 					"Fluxagon"
+				),
+				_react2["default"].createElement(
+					"button",
+					{ onClick: AndroidInterface.shareMe, style: { position: "fixed", top: 20, right: 20, zIndex: 1001, height: "40px" } },
+					_react2["default"].createElement(
+						"svg",
+						{ fill: "#fff", height: "90%", viewBox: "0 0 507.45 507.45" },
+						_react2["default"].createElement(
+							"g",
+							{ id: "share-alt" },
+							_react2["default"].createElement("path", { d: "M408,178.5c-20.4,0-38.25,7.65-51,20.4L175.95,94.35c2.55-5.1,2.55-12.75,2.55-17.85C178.5,33.15,145.35,0,102,0    S25.5,33.15,25.5,76.5S58.65,153,102,153c20.4,0,38.25-7.65,51-20.4l181.05,104.55c-2.55,5.1-2.55,12.75-2.55,17.85    c0,5.1,0,12.75,2.55,17.85L153,379.95c-12.75-12.75-30.6-20.4-51-20.4c-40.8,0-73.95,33.15-73.95,73.95S61.2,507.45,102,507.45    s73.95-33.15,73.95-73.95c0-5.1,0-10.2-2.55-17.85L354.45,308.55c12.75,12.75,30.6,20.4,51,20.4c43.35,0,76.5-33.15,76.5-76.5    C481.95,209.1,451.35,178.5,408,178.5z" })
+						)
+					)
 				),
 				content
 			);

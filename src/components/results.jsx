@@ -13,7 +13,7 @@ const fills = [
 class Results extends React.Component {
 	render() {
 		let nextButton = this.props.hasNextLevel ? <button onClick={this.props.onNextGame}>Next level</button> : null;
-		return (<div style={{position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)"}}>
+		return (<div style={{position: "fixed", top: 0, width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)"}}>
 			<div style={{
 				position: "fixed",
 				width: "90%",

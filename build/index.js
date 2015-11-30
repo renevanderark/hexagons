@@ -20627,7 +20627,7 @@ var Header = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"header",
-				null,
+				{ style: { width: "100%", position: "fixed", zIndex: 1, opacity: ".8", backgroundColor: "rgba(255,255,255,.5)" } },
 				"L: ",
 				this.props.level,
 				" / ",
@@ -20877,7 +20877,7 @@ var Results = (function (_React$Component) {
 			) : null;
 			return _react2["default"].createElement(
 				"div",
-				{ style: { position: "fixed", width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
+				{ style: { position: "fixed", top: 0, width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
 				_react2["default"].createElement(
 					"div",
 					{ style: {
@@ -21155,22 +21155,12 @@ var App = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"div",
 				{ style: { fontFamily: "sans-serif" } },
-				_react2["default"].createElement(
-					"button",
-					{ onClick: this.onReset.bind(this), style: { float: "left" } },
-					"back"
-				),
-				_react2["default"].createElement(
-					"button",
-					{ onClick: this.solve.bind(this), style: { float: "right" } },
-					"skip"
-				),
 				header,
 				results,
 				_react2["default"].createElement(
 					"div",
 					{ id: "canvas-wrapper", style: {
-							height: "calc(100% - 21px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+							height: "100%", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 						} },
 					_react2["default"].createElement(
 						"svg",

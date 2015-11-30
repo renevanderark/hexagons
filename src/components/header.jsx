@@ -25,7 +25,7 @@ class Header extends React.Component {
 	}
 
 	render() {
-		return (<header>
+		return (<header style={{width: "100%", position: "fixed", zIndex: 1, opacity: ".8", backgroundColor: "rgba(255,255,255,.5)"}}>
 			L: {this.props.level} / {this.props.levels},
 			T: {Math.floor((new Date().getTime() - this.props.startTime) / 1000)}
 		</header>);

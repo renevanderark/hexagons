@@ -83,12 +83,10 @@ class App extends React.Component {
 		let header = <Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
-				<button onClick={this.onReset.bind(this)} style={{float: "left"}}>back</button>
-				<button onClick={this.solve.bind(this)} style={{float: "right"}}>skip</button>
 				{header}
 				{results}
 				<div id="canvas-wrapper" style={{
-					height: "calc(100% - 21px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+					height: "100%", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 				}}>
 					<svg
 						height="100%"
