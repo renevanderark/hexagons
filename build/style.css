@@ -55,9 +55,8 @@ font-family: sans-serif;
 }
 
 
-#menu {
+#menu > div{
 	background-color: #ddf;
-	height: 100%;
 }
 
 a {

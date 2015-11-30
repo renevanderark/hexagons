@@ -1,6 +1,8 @@
 import React from "react";
 
-const levelCap = 100;
+const levelCap = parseInt(location.href.replace(/.*\?levelCap=([0-9]+)/, "$1")) || 100;
+localStorage.setItem("level-cap", levelCap);
+
 class Menu extends React.Component {
 
 	constructor(props) {
@@ -19,7 +21,7 @@ class Menu extends React.Component {
 			</a>);
 		}
 
-		return (<div style={{height: "calc(100% - 75px)", overflowY: "auto"}}>
+		return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
 			{levels}
 		</div>);
 	}
@@ -37,7 +39,7 @@ class Menu extends React.Component {
 	}
 
 	renderLevelPacks() {
-		return (<div style={{height: "calc(100% - 75px)", overflowY: "auto"}}>
+		return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
 			<a onClick={this.setLevelPack.bind(this, "3x4-3")}>{this.renderHex()} 3x4 - 3</a>
 			<a onClick={this.setLevelPack.bind(this, "3x4-4")}>{this.renderHex()} 3x4 - 4</a>
 			<a onClick={this.setLevelPack.bind(this, "3x4-5")}>{this.renderHex()} 3x4 - 5</a>
@@ -63,7 +65,7 @@ class Menu extends React.Component {
 		let content = this.state.levelPack ? this.renderLevels() : this.renderLevelPacks();
 		return (
 			<div id="menu">
-				<h1>Fluxagon</h1>
+				<h1 style={{position: "fixed", top: 0, display: "block", width: "100%", backgroundColor: "#fff", zIndex: 1000}}>Fluxagon</h1>
 				{content}
 			</div>
 		);

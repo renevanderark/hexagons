@@ -70,7 +70,7 @@ class App extends React.Component {
 
 	render() {
 		if(this.state.grid === null) {
-			location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html";
+			location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html?levelCap=" + this.state.levels;
 		}
 		let results = this.state.finished ?
 			(<Results

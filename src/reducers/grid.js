@@ -1,6 +1,6 @@
 import {detectFlow} from "../api";
 
-const levelCap = 100;
+const levelCap = parseInt(localStorage.getItem("level-cap") || 100);
 let initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : {
 	...game,
 	levels: levelCap,

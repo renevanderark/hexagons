@@ -19615,7 +19615,8 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var levelCap = 100;
+var levelCap = parseInt(location.href.replace(/.*\?levelCap=([0-9]+)/, "$1")) || 100;
+localStorage.setItem("level-cap", levelCap);
 
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
@@ -19645,7 +19646,7 @@ var Menu = (function (_React$Component) {
 
 			return _react2["default"].createElement(
 				"div",
-				{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
+				{ style: { paddingTop: "75px", paddingBottom: "35px" } },
 				levels
 			);
 		}
@@ -19668,7 +19669,7 @@ var Menu = (function (_React$Component) {
 		value: function renderLevelPacks() {
 			return _react2["default"].createElement(
 				"div",
-				{ style: { height: "calc(100% - 75px)", overflowY: "auto" } },
+				{ style: { paddingTop: "75px", paddingBottom: "35px" } },
 				_react2["default"].createElement(
 					"a",
 					{ onClick: this.setLevelPack.bind(this, "3x4-3") },
@@ -19776,7 +19777,7 @@ var Menu = (function (_React$Component) {
 				{ id: "menu" },
 				_react2["default"].createElement(
 					"h1",
-					null,
+					{ style: { position: "fixed", top: 0, display: "block", width: "100%", backgroundColor: "#fff", zIndex: 1000 } },
 					"Fluxagon"
 				),
 				content

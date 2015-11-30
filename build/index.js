@@ -21143,7 +21143,7 @@ var App = (function (_React$Component) {
 		key: "render",
 		value: function render() {
 			if (this.state.grid === null) {
-				location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html";
+				location.href = this.state.gameIdx > 0 ? this.state.levelPack + "." + this.state.gameIdx + ".html" : "index.html?levelCap=" + this.state.levels;
 			}
 			var results = this.state.finished ? _react2["default"].createElement(_componentsResults2["default"], {
 				hasNextLevel: this.state.gameIdx + 1 < this.state.levels,
@@ -21210,7 +21210,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 var _api = _dereq_("../api");
 
-var levelCap = 100;
+var levelCap = parseInt(localStorage.getItem("level-cap") || 100);
 var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage.getItem("saved-state")) : _extends({}, game, {
 	levels: levelCap,
 	updated: 0,
