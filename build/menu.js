@@ -19654,7 +19654,7 @@ var Menu = (function (_React$Component) {
 		value: function renderHex() {
 			return _react2["default"].createElement(
 				"svg",
-				{ viewBox: "0 0 300 260", height: "60%", style: { position: "relative", top: "4px" } },
+				{ height: "60%", style: { position: "relative", top: "4px" }, viewBox: "0 0 300 260" },
 				_react2["default"].createElement("polygon", { fill: "rgba(0,0,255,.2)", points: "300,130 225,260 75,260 0,130 75,0 225,0", stroke: "#DDD", strokeWidth: "1" })
 			);
 		}

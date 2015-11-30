@@ -21170,7 +21170,7 @@ var App = (function (_React$Component) {
 				_react2["default"].createElement(
 					"div",
 					{ id: "canvas-wrapper", style: {
-							height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+							height: "calc(100% - 21px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 						} },
 					_react2["default"].createElement(
 						"svg",
@@ -21223,15 +21223,14 @@ var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 if (!initialState.scale) {
 	initialState.scale = 1.0;
 }
-if (!initialState.startTime) {
-	initialState.startTime = new Date().getTime();
-}
 if (!initialState.grid) {
 	initialState = _extends({}, initialState, game);
 }
 if (!initialState.levelPack) {
 	initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") });
 }
+
+initialState.startTime = new Date().getTime();
 initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 
 exports["default"] = function (state, action) {

@@ -12,7 +12,7 @@ class Menu extends React.Component {
 	}
 
 	renderLevels() {
-		let levels = []
+		let levels = [];
 		for(let i = 0; i < levelCap; i++) {
 			levels.push(<a href={this.state.levelPack + "." + i + ".html"} key={i}>
 				Level {i+1}
@@ -26,7 +26,7 @@ class Menu extends React.Component {
 
 	renderHex() {
 		return (
-			<svg viewBox="0 0 300 260" height="60%" style={{position: "relative", top: "4px"}}>
+			<svg height="60%" style={{position: "relative", top: "4px"}} viewBox="0 0 300 260">
 				<polygon fill="rgba(0,0,255,.2)" points="300,130 225,260 75,260 0,130 75,0 225,0" stroke="#DDD" strokeWidth="1" />
 			</svg>
 		);

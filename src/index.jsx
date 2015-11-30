@@ -88,7 +88,7 @@ class App extends React.Component {
 				{header}
 				{results}
 				<div id="canvas-wrapper" style={{
-					height: "calc(100% - 18px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+					height: "calc(100% - 21px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 				}}>
 					<svg
 						height="100%"
