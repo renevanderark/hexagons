@@ -19618,12 +19618,6 @@ var _react2 = _interopRequireDefault(_react);
 var levelCap = parseInt(location.href.replace(/.*\?levelCap=([0-9]+)/, "$1")) || 100;
 localStorage.setItem("level-cap", levelCap);
 
-var AndroidInterface = AndroidInterface || {
-	shareMe: function shareMe() {
-		alert("stub shareMe");
-	}
-};
-
 var Menu = (function (_React$Component) {
 	_inherits(Menu, _React$Component);
 
@@ -19788,7 +19782,9 @@ var Menu = (function (_React$Component) {
 				),
 				_react2["default"].createElement(
 					"button",
-					{ onClick: AndroidInterface.shareMe, style: { position: "fixed", top: 20, right: 20, zIndex: 1001, height: "40px" } },
+					{ onClick: function () {
+							AndroidInterface.shareMe();
+						}, style: { position: "fixed", top: 20, right: 20, zIndex: 1001, height: "40px" } },
 					_react2["default"].createElement(
 						"svg",
 						{ fill: "#fff", height: "90%", viewBox: "0 0 507.45 507.45" },
