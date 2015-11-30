@@ -17,6 +17,7 @@ if(!initialState.levelPack) { initialState = {...initialState, levelPack: locati
 
 initialState.startTime = new Date().getTime();
 initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
+initialState = {...initialState, ...game};
 
 export default function(state = initialState, action) {
 	let gridPiece;
