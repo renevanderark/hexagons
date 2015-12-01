@@ -20525,9 +20525,9 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var fills = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+var fills = ["white", "black", "white", "black", "black", "black"];
 
-var strokes = ["rgb(0,0,125)", "rgb(0,125,0)", "rgb(125,0,0)", "rgb(125,255,0)", "rgb(0,125,125)", "rgb(125,0,125)"];
+var strokes = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
 
 var Arrow = (function (_React$Component) {
 	_inherits(Arrow, _React$Component);
@@ -20542,7 +20542,7 @@ var Arrow = (function (_React$Component) {
 		key: "setTransform",
 		value: function setTransform() {
 			var position = [this.props.gridPiece.x * 225, this.props.gridPiece.y * 260 + this.props.gridPiece.x % 2 * 130];
-			return "translate(" + position[0] + ", " + position[1] + ") rotate(" + (this.props.idx - 1) * 60 + ", 150, 130) rotate(" + (this.props.type === "exits" ? 180 : 0) + ", 150, 11)";
+			return "translate(" + position[0] + ", " + (position[1] + ") rotate(" + (this.props.idx - 1) * 60 + ", 150, 130) ") + "translate(0, -25) " + ("rotate(" + (this.props.type === "exits" ? 180 : 0) + ", 150, 11) ");
 		}
 	}, {
 		key: "render",
@@ -20550,8 +20550,8 @@ var Arrow = (function (_React$Component) {
 			return _react2["default"].createElement(
 				"g",
 				{ transform: this.setTransform() },
-				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: ".5" }),
-				_react2["default"].createElement("polygon", { fill: "transparent", points: "147,0 147,15 144,15 150,21 156,15 153,15 153,0", stroke: "white", strokeWidth: "1" })
+				_react2["default"].createElement("polygon", { points: "150,-5 150,25", stroke: strokes[this.props.hasFlow - 1], strokeOpacity: "0.7", strokeWidth: "20" }),
+				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: ".5" })
 			);
 		}
 	}]);
@@ -20627,7 +20627,7 @@ var Header = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"header",
-				{ style: { width: "100%", position: "fixed", zIndex: 1, opacity: ".8", backgroundColor: "rgba(255,255,255,.5)" } },
+				{ style: { height: "20px", width: "100%", opacity: ".8", backgroundColor: "rgba(255,255,255,.5)" } },
 				"L: ",
 				this.props.level,
 				" / ",
@@ -20979,7 +20979,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var dims = [[37.5, 65], [150, 0], [262.5, 65], [262.5, 195], [150, 260], [37.5, 195]];
 
-var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.6)", "rgba(0,255,0,.6)", "rgba(255,0,0,.6)", "rgba(255,255,0,.6)", "rgba(0,255,255,.6)", "rgba(255,0,255,.6)"];
+var strokes = ["rgba(0,0,0,.3)", "rgba(0,0,255,.8)", "rgba(0,255,0,.8)", "rgba(255,0,0,.8)", "rgba(255,255,0,.8)", "rgba(0,255,255,.8)", "rgba(255,0,255,.8)"];
 
 var Tube = (function (_React$Component) {
 	_inherits(Tube, _React$Component);
@@ -21132,7 +21132,7 @@ var App = (function (_React$Component) {
 	}, {
 		key: "getViewBox",
 		value: function getViewBox() {
-			return "0 0 " + (this.state.width * 225 + 75) + " " + (this.state.height * 260 + 130);
+			return "-20 -20 " + (this.state.width * 225 + 75 + 40) + " " + (this.state.height * 260 + 130 + 40);
 		}
 	}, {
 		key: "solve",
@@ -21160,7 +21160,7 @@ var App = (function (_React$Component) {
 				_react2["default"].createElement(
 					"div",
 					{ id: "canvas-wrapper", style: {
-							height: "100%", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+							height: "calc(100% - 20px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 						} },
 					_react2["default"].createElement(
 						"svg",
@@ -21213,13 +21213,8 @@ var initialState = localStorage.getItem("saved-state") ? JSON.parse(localStorage
 if (!initialState.scale) {
 	initialState.scale = 1.0;
 }
-if (!initialState.grid) {
-	initialState = _extends({}, initialState, game);
-}
-if (!initialState.levelPack) {
-	initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") });
-}
 
+initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.*\/(.+)\..+\.html/, "$1") });
 initialState.startTime = new Date().getTime();
 initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 initialState = _extends({}, initialState, game);
