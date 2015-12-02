@@ -61,7 +61,7 @@ class App extends React.Component {
 	}
 
 	getViewBox() {
-		return `-20 -20 ${this.state.width * 225 + 75 + 40} ${this.state.height * 260 + 130 + 40}`;
+		return `0 -30 ${this.state.width * 225 + 75} ${this.state.height * 260 + 130 + 60}`;
 	}
 
 	solve() {
@@ -86,7 +86,7 @@ class App extends React.Component {
 				{header}
 				{results}
 				<div id="canvas-wrapper" style={{
-					height: "calc(100% - 20px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+					height: "96%", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 				}}>
 					<svg
 						height="100%"

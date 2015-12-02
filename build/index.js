@@ -20551,7 +20551,7 @@ var Arrow = (function (_React$Component) {
 				"g",
 				{ transform: this.setTransform() },
 				_react2["default"].createElement("polygon", { points: "150,-5 150,25", stroke: strokes[this.props.hasFlow - 1], strokeOpacity: "0.7", strokeWidth: "20" }),
-				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "148,1 148,15 145,15 150,20 155,15 152,15 152,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: ".5" })
+				_react2["default"].createElement("polygon", { fill: fills[this.props.hasFlow - 1], points: "149,1 149,12 145,12 150,20 155,12 151,12 151,1", stroke: strokes[this.props.hasFlow - 1], strokeWidth: ".5" })
 			);
 		}
 	}]);
@@ -20627,7 +20627,7 @@ var Header = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"header",
-				{ style: { height: "20px", width: "100%", opacity: ".8", backgroundColor: "rgba(255,255,255,.5)" } },
+				{ style: { height: "4%", width: "100%", fontSize: "1em" } },
 				"L: ",
 				this.props.level,
 				" / ",
@@ -21132,7 +21132,7 @@ var App = (function (_React$Component) {
 	}, {
 		key: "getViewBox",
 		value: function getViewBox() {
-			return "-20 -20 " + (this.state.width * 225 + 75 + 40) + " " + (this.state.height * 260 + 130 + 40);
+			return "0 -30 " + (this.state.width * 225 + 75) + " " + (this.state.height * 260 + 130 + 60);
 		}
 	}, {
 		key: "solve",
@@ -21160,7 +21160,7 @@ var App = (function (_React$Component) {
 				_react2["default"].createElement(
 					"div",
 					{ id: "canvas-wrapper", style: {
-							height: "calc(100% - 20px)", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
+							height: "96%", width: "100%", overflow: "auto", backgroundColor: "rgb(200,200,225)"
 						} },
 					_react2["default"].createElement(
 						"svg",

@@ -31,7 +31,7 @@ class Arrow extends React.Component {
 		return (
 			<g transform={this.setTransform()}>
 				<polygon points="150,-5 150,25" stroke={strokes[this.props.hasFlow - 1]} strokeOpacity="0.7" strokeWidth="20" />
-				<polygon fill={fills[this.props.hasFlow - 1]} points="148,1 148,15 145,15 150,20 155,15 152,15 152,1" stroke={strokes[this.props.hasFlow - 1]} strokeWidth=".5" />
+				<polygon fill={fills[this.props.hasFlow - 1]} points="149,1 149,12 145,12 150,20 155,12 151,12 151,1" stroke={strokes[this.props.hasFlow - 1]} strokeWidth=".5" />
 
 			</g>
 		);
