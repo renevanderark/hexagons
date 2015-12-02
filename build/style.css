@@ -85,6 +85,15 @@ button {
 	background-color: #aaf;
 }
 
+button,a {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 h1 {
 	font-size: 3em;
 	color: #88a;
