@@ -19662,6 +19662,7 @@ var Menu = (function (_React$Component) {
 	}, {
 		key: "setLevelPack",
 		value: function setLevelPack(levelPack) {
+			window.scrollTo(0, 0);
 			this.setState({ levelPack: levelPack });
 		}
 	}, {

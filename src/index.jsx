@@ -80,7 +80,7 @@ class App extends React.Component {
 				scores={this.state.scores}
 				startTime={this.state.startTime} />) :
 			null;
-		let header = <Header level={this.state.gameIdx + 1} levels={this.state.levels} startTime={this.state.startTime} />;
+		let header = <Header level={this.state.gameIdx + 1} levelPack={this.state.levelPack} levels={this.state.levels} startTime={this.state.startTime} />;
 		return (
 			<div style={{fontFamily: "sans-serif"}}>
 				{header}

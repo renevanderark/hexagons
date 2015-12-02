@@ -25,8 +25,9 @@ class Header extends React.Component {
 	}
 
 	render() {
-		return (<header style={{height: "4%", width: "100%", fontSize: "1em"}}>
-			L: {this.props.level} / {this.props.levels},
+		return (<header style={{height: "4%", width: "100%", fontSize: "1.2em"}}>
+			<span style={{color: "#aaa", marginRight: "10px"}}>{this.props.levelPack}</span>
+			L:  {this.props.level} / {this.props.levels}<span style={{marginRight: "10px"}}></span>
 			T: {Math.floor((new Date().getTime() - this.props.startTime) / 1000)}
 		</header>);
 	}
@@ -34,6 +35,7 @@ class Header extends React.Component {
 
 Header.propTypes = {
 	level: React.PropTypes.number,
+	levelPack: React.PropTypes.string,
 	levels: React.PropTypes.number,
 	startTime: React.PropTypes.number
 };

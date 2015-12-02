@@ -36,6 +36,7 @@ class Menu extends React.Component {
 	}
 
 	setLevelPack(levelPack) {
+		window.scrollTo(0,0);
 		this.setState({levelPack: levelPack});
 	}
 

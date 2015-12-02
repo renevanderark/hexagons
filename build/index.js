@@ -20627,12 +20627,18 @@ var Header = (function (_React$Component) {
 		value: function render() {
 			return _react2["default"].createElement(
 				"header",
-				{ style: { height: "4%", width: "100%", fontSize: "1em" } },
-				"L: ",
+				{ style: { height: "4%", width: "100%", fontSize: "1.2em" } },
+				_react2["default"].createElement(
+					"span",
+					{ style: { color: "#aaa", marginRight: "10px" } },
+					this.props.levelPack
+				),
+				"L:  ",
 				this.props.level,
 				" / ",
 				this.props.levels,
-				", T: ",
+				_react2["default"].createElement("span", { style: { marginRight: "10px" } }),
+				"T: ",
 				Math.floor((new Date().getTime() - this.props.startTime) / 1000)
 			);
 		}
@@ -20643,6 +20649,7 @@ var Header = (function (_React$Component) {
 
 Header.propTypes = {
 	level: _react2["default"].PropTypes.number,
+	levelPack: _react2["default"].PropTypes.string,
 	levels: _react2["default"].PropTypes.number,
 	startTime: _react2["default"].PropTypes.number
 };
@@ -20856,7 +20863,9 @@ var _react = _dereq_("react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var fills = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+var strokes = ["rgb(0,0,255)", "rgb(0,255,0)", "rgb(255,0,0)", "rgb(255,255,0)", "rgb(0,255,255)", "rgb(255,0,255)"];
+
+var fills = ["rgba(0,0,255,.4)", "rgba(0,255,0,.4)", "rgba(255,0,0,.4)", "rgba(255,255,0,.4)", "rgba(0,255,255,.4)", "rgba(255,0,255,.4)"];
 
 var Results = (function (_React$Component) {
 	_inherits(Results, _React$Component);
@@ -20875,6 +20884,10 @@ var Results = (function (_React$Component) {
 				{ onClick: this.props.onNextGame },
 				"Next level"
 			) : null;
+			var timeScore = Math.floor((new Date().getTime() - this.props.startTime) / 100);
+			var total = this.props.scores.reduce(function (sum, score) {
+				return sum + score * 100;
+			}, 0) - timeScore;
 			return _react2["default"].createElement(
 				"div",
 				{ style: { position: "fixed", top: 0, width: "100%", height: "100%", zIndex: 1, backgroundColor: "rgba(0,0,0,0.3)" } },
@@ -20902,32 +20915,41 @@ var Results = (function (_React$Component) {
 						this.props.scores.map(function (score, i) {
 							return _react2["default"].createElement(
 								"li",
-								{ key: i },
+								{ key: i, style: { marginTop: "10px" } },
 								_react2["default"].createElement(
 									"label",
-									{ style: { display: "inline-block", width: "50%", color: fills[i] } },
-									"||"
+									{ style: { display: "inline-block", width: "50%", verticalAlign: "middle" } },
+									_react2["default"].createElement("div", { style: { width: "100%", height: "15px", backgroundColor: fills[i] } })
 								),
 								_react2["default"].createElement(
 									"span",
-									{ style: { display: "inline-block", width: "50%", textAlign: "right" } },
+									{ style: { display: "inline-block", verticalAlign: "middle", fontSize: "1em", width: "50%", textAlign: "right", color: strokes[i] } },
 									score * 100
 								)
 							);
 						}),
 						_react2["default"].createElement(
 							"li",
-							null,
+							{ style: { marginTop: "10px" } },
 							_react2["default"].createElement(
 								"label",
-								{ style: { display: "inline-block", width: "50%" } },
-								"T"
+								{ style: { display: "inline-block", fontSize: "1em", width: "50%" } },
+								"Time"
 							),
 							_react2["default"].createElement(
 								"span",
-								{ style: { display: "inline-block", width: "50%", textAlign: "right", color: "red" } },
+								{ style: { display: "inline-block", fontSize: "1em", width: "50%", textAlign: "right", color: "red" } },
 								"-",
-								Math.floor((new Date().getTime() - this.props.startTime) / 100)
+								timeScore
+							)
+						),
+						_react2["default"].createElement(
+							"li",
+							{ style: { marginTop: "10px", paddingTop: "10px", borderTop: "1px solid white" } },
+							_react2["default"].createElement(
+								"span",
+								{ style: { display: "inline-block", fontSize: "1em", width: "100%", textAlign: "right", color: "black" } },
+								total
 							)
 						)
 					),
@@ -21151,7 +21173,7 @@ var App = (function (_React$Component) {
 				onReset: this.onReset.bind(this),
 				scores: this.state.scores,
 				startTime: this.state.startTime }) : null;
-			var header = _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levels: this.state.levels, startTime: this.state.startTime });
+			var header = _react2["default"].createElement(_componentsHeader2["default"], { level: this.state.gameIdx + 1, levelPack: this.state.levelPack, levels: this.state.levels, startTime: this.state.startTime });
 			return _react2["default"].createElement(
 				"div",
 				{ style: { fontFamily: "sans-serif" } },
