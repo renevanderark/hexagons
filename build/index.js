@@ -21240,6 +21240,7 @@ initialState = _extends({}, initialState, { levelPack: location.href.replace(/^.
 initialState.startTime = new Date().getTime();
 initialState.gameIdx = parseInt(location.href.replace(/^.*\/.+\.(.+)\.html/, "$1"));
 initialState = _extends({}, initialState, game);
+initialState.levels = levelCap;
 
 exports["default"] = function (state, action) {
 	if (state === undefined) state = initialState;
