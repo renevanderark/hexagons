@@ -19643,7 +19643,15 @@ var Menu = (function (_React$Component) {
 					i + 1
 				));
 			}
-
+			if (levelCap < 40) {
+				levels.push(_react2["default"].createElement(
+					"a",
+					{ key: "a", onClick: function () {
+							AndroidInterface.goToPremium();
+						} },
+					"$ more levels..."
+				));
+			}
 			return _react2["default"].createElement(
 				"div",
 				{ style: { paddingTop: "75px", paddingBottom: "35px" } },
@@ -19668,106 +19676,245 @@ var Menu = (function (_React$Component) {
 	}, {
 		key: "renderLevelPacks",
 		value: function renderLevelPacks() {
-			return _react2["default"].createElement(
-				"div",
-				{ style: { paddingTop: "75px", paddingBottom: "35px" } },
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x4-3") },
-					this.renderHex(),
-					" 3x4 - 3"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x4-4") },
-					this.renderHex(),
-					" 3x4 - 4"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x4-5") },
-					this.renderHex(),
-					" 3x4 - 5"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x4-6") },
-					this.renderHex(),
-					" 3x4 - 6"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x5-3") },
-					this.renderHex(),
-					" 3x5 - 3"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x5-4") },
-					this.renderHex(),
-					" 3x5 - 4"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x5-5") },
-					this.renderHex(),
-					" 3x5 - 5"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "3x5-6") },
-					this.renderHex(),
-					" 3x5 - 6"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x4-3") },
-					this.renderHex(),
-					" 4x4 - 3"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x4-4") },
-					this.renderHex(),
-					" 4x4 - 4"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x4-5") },
-					this.renderHex(),
-					" 4x4 - 5"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x4-6") },
-					this.renderHex(),
-					" 4x4 - 6"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x5-3") },
-					this.renderHex(),
-					" 4x5 - 3"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x5-4") },
-					this.renderHex(),
-					" 4x5 - 4"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x5-5") },
-					this.renderHex(),
-					" 4x5 - 5"
-				),
-				_react2["default"].createElement(
-					"a",
-					{ onClick: this.setLevelPack.bind(this, "4x5-6") },
-					this.renderHex(),
-					" 4x5 - 6"
-				)
-			);
+			if (levelCap < 40) {
+				return _react2["default"].createElement(
+					"div",
+					{ style: { paddingTop: "75px", paddingBottom: "35px" } },
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-3") },
+						this.renderHex(),
+						" 3x4 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-4") },
+						this.renderHex(),
+						" 3x4 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-5") },
+						this.renderHex(),
+						" 3x4 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-6") },
+						this.renderHex(),
+						" 3x4 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 3x5 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 3x5 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 3x5 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 3x5 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x4 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x4 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x4 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x4 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x5 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x5 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x5 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: function () {
+								AndroidInterface.goToPremium();
+							}, style: { opacity: ".3" } },
+						"$ ",
+						this.renderHex(),
+						" 4x5 - 6"
+					)
+				);
+			} else {
+				return _react2["default"].createElement(
+					"div",
+					{ style: { paddingTop: "75px", paddingBottom: "35px" } },
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-3") },
+						this.renderHex(),
+						" 3x4 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-4") },
+						this.renderHex(),
+						" 3x4 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-5") },
+						this.renderHex(),
+						" 3x4 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x4-6") },
+						this.renderHex(),
+						" 3x4 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x5-3") },
+						this.renderHex(),
+						" 3x5 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x5-4") },
+						this.renderHex(),
+						" 3x5 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x5-5") },
+						this.renderHex(),
+						" 3x5 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "3x5-6") },
+						this.renderHex(),
+						" 3x5 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x4-3") },
+						this.renderHex(),
+						" 4x4 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x4-4") },
+						this.renderHex(),
+						" 4x4 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x4-5") },
+						this.renderHex(),
+						" 4x4 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x4-6") },
+						this.renderHex(),
+						" 4x4 - 6"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x5-3") },
+						this.renderHex(),
+						" 4x5 - 3"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x5-4") },
+						this.renderHex(),
+						" 4x5 - 4"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x5-5") },
+						this.renderHex(),
+						" 4x5 - 5"
+					),
+					_react2["default"].createElement(
+						"a",
+						{ onClick: this.setLevelPack.bind(this, "4x5-6") },
+						this.renderHex(),
+						" 4x5 - 6"
+					)
+				);
+			}
 		}
 	}, {
 		key: "render",

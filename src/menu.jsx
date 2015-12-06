@@ -21,7 +21,9 @@ class Menu extends React.Component {
 				Level {i+1}
 			</a>);
 		}
-
+		if(levelCap < 40) {
+			levels.push(<a key="a" onClick={function() {AndroidInterface.goToPremium(); }}>$ more levels...</a>)
+		}
 		return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
 			{levels}
 		</div>);
@@ -41,27 +43,53 @@ class Menu extends React.Component {
 	}
 
 	renderLevelPacks() {
-		return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
-			<a onClick={this.setLevelPack.bind(this, "3x4-3")}>{this.renderHex()} 3x4 - 3</a>
-			<a onClick={this.setLevelPack.bind(this, "3x4-4")}>{this.renderHex()} 3x4 - 4</a>
-			<a onClick={this.setLevelPack.bind(this, "3x4-5")}>{this.renderHex()} 3x4 - 5</a>
-			<a onClick={this.setLevelPack.bind(this, "3x4-6")}>{this.renderHex()} 3x4 - 6</a>
+		if(levelCap < 40) {
+			return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
+				<a onClick={this.setLevelPack.bind(this, "3x4-3")}>{this.renderHex()} 3x4 - 3</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-4")}>{this.renderHex()} 3x4 - 4</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-5")}>{this.renderHex()} 3x4 - 5</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-6")}>{this.renderHex()} 3x4 - 6</a>
 
-			<a onClick={this.setLevelPack.bind(this, "3x5-3")}>{this.renderHex()} 3x5 - 3</a>
-			<a onClick={this.setLevelPack.bind(this, "3x5-4")}>{this.renderHex()} 3x5 - 4</a>
-			<a onClick={this.setLevelPack.bind(this, "3x5-5")}>{this.renderHex()} 3x5 - 5</a>
-			<a onClick={this.setLevelPack.bind(this, "3x5-6")}>{this.renderHex()} 3x5 - 6</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 3x5 - 3</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 3x5 - 4</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 3x5 - 5</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 3x5 - 6</a>
 
-			<a onClick={this.setLevelPack.bind(this, "4x4-3")}>{this.renderHex()} 4x4 - 3</a>
-			<a onClick={this.setLevelPack.bind(this, "4x4-4")}>{this.renderHex()} 4x4 - 4</a>
-			<a onClick={this.setLevelPack.bind(this, "4x4-5")}>{this.renderHex()} 4x4 - 5</a>
-			<a onClick={this.setLevelPack.bind(this, "4x4-6")}>{this.renderHex()} 4x4 - 6</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x4 - 3</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x4 - 4</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x4 - 5</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x4 - 6</a>
 
-			<a onClick={this.setLevelPack.bind(this, "4x5-3")}>{this.renderHex()} 4x5 - 3</a>
-			<a onClick={this.setLevelPack.bind(this, "4x5-4")}>{this.renderHex()} 4x5 - 4</a>
-			<a onClick={this.setLevelPack.bind(this, "4x5-5")}>{this.renderHex()} 4x5 - 5</a>
-			<a onClick={this.setLevelPack.bind(this, "4x5-6")}>{this.renderHex()} 4x5 - 6</a>
-		</div>);
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x5 - 3</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x5 - 4</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x5 - 5</a>
+				<a onClick={function() {AndroidInterface.goToPremium(); }} style={{opacity: ".3"}}>$ {this.renderHex()} 4x5 - 6</a>
+			</div>);
+
+
+		} else {
+			return (<div style={{paddingTop: "75px", paddingBottom: "35px"}}>
+				<a onClick={this.setLevelPack.bind(this, "3x4-3")}>{this.renderHex()} 3x4 - 3</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-4")}>{this.renderHex()} 3x4 - 4</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-5")}>{this.renderHex()} 3x4 - 5</a>
+				<a onClick={this.setLevelPack.bind(this, "3x4-6")}>{this.renderHex()} 3x4 - 6</a>
+
+				<a onClick={this.setLevelPack.bind(this, "3x5-3")}>{this.renderHex()} 3x5 - 3</a>
+				<a onClick={this.setLevelPack.bind(this, "3x5-4")}>{this.renderHex()} 3x5 - 4</a>
+				<a onClick={this.setLevelPack.bind(this, "3x5-5")}>{this.renderHex()} 3x5 - 5</a>
+				<a onClick={this.setLevelPack.bind(this, "3x5-6")}>{this.renderHex()} 3x5 - 6</a>
+
+				<a onClick={this.setLevelPack.bind(this, "4x4-3")}>{this.renderHex()} 4x4 - 3</a>
+				<a onClick={this.setLevelPack.bind(this, "4x4-4")}>{this.renderHex()} 4x4 - 4</a>
+				<a onClick={this.setLevelPack.bind(this, "4x4-5")}>{this.renderHex()} 4x4 - 5</a>
+				<a onClick={this.setLevelPack.bind(this, "4x4-6")}>{this.renderHex()} 4x4 - 6</a>
+
+				<a onClick={this.setLevelPack.bind(this, "4x5-3")}>{this.renderHex()} 4x5 - 3</a>
+				<a onClick={this.setLevelPack.bind(this, "4x5-4")}>{this.renderHex()} 4x5 - 4</a>
+				<a onClick={this.setLevelPack.bind(this, "4x5-5")}>{this.renderHex()} 4x5 - 5</a>
+				<a onClick={this.setLevelPack.bind(this, "4x5-6")}>{this.renderHex()} 4x5 - 6</a>
+			</div>);
+		}
 	}
 	render() {
 		let content = this.state.levelPack ? this.renderLevels() : this.renderLevelPacks();

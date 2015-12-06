@@ -75,6 +75,7 @@ class App extends React.Component {
 		let results = this.state.finished ?
 			(<Results
 				hasNextLevel={this.state.gameIdx + 1 < this.state.levels}
+				levels={this.state.levels}
 				onNextGame={this.onNextGame.bind(this)}
 				onReset={this.onReset.bind(this)}
 				scores={this.state.scores}
